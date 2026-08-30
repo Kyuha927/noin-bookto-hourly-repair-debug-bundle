@@ -1,0 +1,17 @@
+{
+  "active_item_overlap": 0,
+  "catalog_sha256": "bebbf66fffb989236e6325797d36cd627e555b60b8dccd7957febea15fc9f8c7",
+  "catalog_total": 2803,
+  "config_sha256": "8b5cf509da96bef72aa70fb343319184bd422b53927009da980fb30d72a3a050",
+  "generation": "bookto30-newto30-oldmac-smoke-g1",
+  "intersection": 0,
+  "newmac_assigned": 2802,
+  "newmac_manifest_sha256": "3e0ce5a97141b7d814c38a141dbda646d9b988eb4ad058bb3ddcc03f20b470e7",
+  "oldmac_assigned": 1,
+  "oldmac_item_key": "newto_fafa:234356",
+  "oldmac_manifest_sha256": "758330fcb88daeeaaf5374af6e0812a0ac793c893a0f7f6f81892f6a933e46d3",
+  "omission": 0,
+  "schema_version": 1,
+  "status": "PASS",
+  "validated_at": "2026-08-31T06:30:52+09:00"
+}

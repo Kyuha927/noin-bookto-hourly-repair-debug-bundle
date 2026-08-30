@@ -1,0 +1,111 @@
+{
+  "schema_version": "bookto_process_report.v1",
+  "lane_id": "bookto29_newto29_alltabs_20260825",
+  "status": "PASS",
+  "contract_sha256": "a27dca7235975017bd100260f86c7d9f3eb0d1740db473368e447e8b432bfc27",
+  "snapshot_sha256": "603492fcd379c8a7a6bd7952aab39af32355308ce259e2cafe97279996d4fe48",
+  "collected_at_epoch": 1788127915.614686,
+  "roles": [
+    {
+      "role_id": "scraper_controller",
+      "process_class": "controller",
+      "status": "PASS",
+      "screen_pids": [
+        68312
+      ],
+      "identity_pids": [
+        68316
+      ],
+      "worker_pids": [
+        62719
+      ],
+      "counts_as_production_worker": false,
+      "errors": []
+    },
+    {
+      "role_id": "preprocess_engine",
+      "process_class": "production_engine",
+      "status": "PASS",
+      "screen_pids": [
+        90395
+      ],
+      "identity_pids": [
+        90403
+      ],
+      "worker_pids": [],
+      "counts_as_production_worker": true,
+      "errors": []
+    },
+    {
+      "role_id": "ocr_engine",
+      "process_class": "production_engine",
+      "status": "PASS",
+      "screen_pids": [
+        49009
+      ],
+      "identity_pids": [
+        49012
+      ],
+      "worker_pids": [],
+      "counts_as_production_worker": true,
+      "errors": []
+    },
+    {
+      "role_id": "learning_keepalive",
+      "process_class": "keepalive",
+      "status": "PASS",
+      "screen_pids": [
+        36933
+      ],
+      "identity_pids": [
+        36936
+      ],
+      "worker_pids": [],
+      "counts_as_production_worker": false,
+      "errors": []
+    },
+    {
+      "role_id": "visual_supervisor",
+      "process_class": "supervisor",
+      "status": "PASS",
+      "screen_pids": [
+        41587
+      ],
+      "identity_pids": [
+        41589
+      ],
+      "worker_pids": [],
+      "counts_as_production_worker": false,
+      "errors": []
+    },
+    {
+      "role_id": "visual_keepalive",
+      "process_class": "keepalive",
+      "status": "PASS",
+      "screen_pids": [
+        40507
+      ],
+      "identity_pids": [
+        40509
+      ],
+      "worker_pids": [],
+      "counts_as_production_worker": false,
+      "errors": []
+    }
+  ],
+  "generation_workers": [],
+  "orphan_generation_worker_pids": [],
+  "counts": {
+    "canonical_control_screens": 6,
+    "active_production_workers": 3,
+    "retired_generation_workers": 0,
+    "model_children": 0,
+    "active_claims": 0,
+    "configured_capacity": {
+      "scrape_slots": 4,
+      "learning_slots": 4,
+      "visual_slots": 8
+    }
+  },
+  "errors": []
+}

@@ -1,0 +1,48 @@
+{
+  "active_generation_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/ACTIVE_GENERATION.json",
+  "assignment_manifest_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/NEWMAC_ASSIGNMENT.json",
+  "background_only": true,
+  "base_urls": {
+    "bookto": "https://ROTATING-HOST.example",
+    "newto": "https://ROTATING-HOST.example"
+  },
+  "catalog_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/CATALOG.json",
+  "cdp_port": 9240,
+  "chrome_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "chrome_profile": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/chrome_profile",
+  "domain_rotation": {
+    "policy": "exact_plus_one_after_two_background_probes_v1",
+    "updated_at": "2026-08-31T06:21:38+09:00"
+  },
+  "domain_suffix": 31,
+  "evidence_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/learning_evidence",
+  "generation_id": "bookto29-newto29-alltabs-20260825-g1",
+  "intake_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/learning_intake.jsonl",
+  "intake_status_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_INTAKE_STATE.json",
+  "learned_exclusion_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNED_EXCLUSIONS.json",
+  "learning_done_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_DONE.jsonl",
+  "learning_generations_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/learning_generations",
+  "learning_workers": 4,
+  "max_list_pages": 500,
+  "ocr_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/derivatives/ocr",
+  "preprocessed_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/derivatives/preprocessed",
+  "priority_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/PRIORITY.jsonl",
+  "progress_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/source_progress.json",
+  "schema_version": 1,
+  "source_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/sources",
+  "state_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/SCRAPE_STATE.json",
+  "tabs": [
+    "bookto_novel",
+    "bookto_enovel",
+    "newto_fafa",
+    "newto_fafaend"
+  ],
+  "visual_capability_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_ATTACHMENT_CAPABILITY.json",
+  "visual_pages_per_task": 4,
+  "visual_recovery_limit": 128,
+  "visual_smoke_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_SMOKE.json",
+  "visual_worker_state_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json",
+  "visual_workers": 8,
+  "webtoon_state_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json",
+  "workers": 4
+}

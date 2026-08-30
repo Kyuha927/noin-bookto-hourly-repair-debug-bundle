@@ -1,0 +1,18 @@
+{
+  "background_gate": "/Users/NEWMAC/.local/bin/agent-background-computer-use-gate",
+  "cdp_port": 9240,
+  "chrome_path": "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+  "chrome_mode": "background_headful",
+  "chrome_profile": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/chrome_profile",
+  "chrome_screen": "bookto30_newto30_newmac_chrome_g1",
+  "cpu_guard": "/Users/NEWMAC/Documents/noin/tools/codex_cpu_survival_guard.sh",
+  "keepalive_screen": "bookto30_newto30_newmac_chrome_keepalive_g1",
+  "lane_id": "bookto29_newto29_alltabs_20260825",
+  "proxy_server": "socks5://127.0.0.1:<PORT>",
+  "root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825",
+  "schema_version": 1,
+  "scraper_child_pid": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/scraper.child.pid",
+  "scraper_keepalive": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_scraper_keepalive.sh",
+  "scraper_lock": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/scraper.singleton.lock",
+  "scraper_targets_dir": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/scraper_targets"
+}

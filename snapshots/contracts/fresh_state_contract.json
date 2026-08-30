@@ -1,0 +1,41 @@
+{
+  "schema_version": "global_fresh_state_contract.v1",
+  "contract_id": "noin-bookto29-newto29-alltabs-hourly-repair",
+  "automation_id": "noin-bookto29-newto29-alltabs-hourly-repair",
+  "refresh_commands": [
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_process_check.sh",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/bookto_multitab_runtime_binding.sh sync"
+  ],
+  "canonical_state_paths": [
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/PROCESS_STATUS.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/SCRAPE_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_INTAKE_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/ACTIVE_GENERATION.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/NEWMAC_CHROME_CONTROL.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/NEWMAC_RUNTIME_BINDING.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/PAIR_VALIDATION.json"
+  ],
+  "volatile_state_paths": [
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/PROCESS_STATUS.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/NEWMAC_RUNTIME_BINDING.json"
+  ],
+  "progress_state_paths": [
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/SCRAPE_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_INTAKE_STATE.json",
+    "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json"
+  ],
+  "receipt_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/watchdog_receipts",
+  "state_ttl_seconds": 600,
+  "max_receipt_age_seconds": 900,
+  "same_failure_limit": 3,
+  "max_repairs_per_cycle": 1,
+  "require_hash_readback": true,
+  "require_progress_movement": true,
+  "forbid_status_only": true,
+  "require_item_specific_repair_or_escalation": true,
+  "require_protected_state_preserved": true,
+  "require_duplicate_claims_zero": true
+}

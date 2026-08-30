@@ -1,0 +1,13 @@
+{
+  "schema": "multitab_learning_intake.v1",
+  "updated_at": "2026-08-31T07:57:21+09:00",
+  "ready": 0,
+  "waiting": {
+    "not_scraped": 2463,
+    "ocr_not_ready": 10,
+    "visual_not_ready": 42,
+    "already_done": 66,
+    "learned_excluded": 222
+  },
+  "done": 67
+}

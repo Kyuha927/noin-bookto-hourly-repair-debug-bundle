@@ -1,0 +1,18 @@
+{
+  "active_claim_slots": 0,
+  "attachment_capability_pass": true,
+  "completed_visual_items": 1,
+  "cpu_guard": [
+    "SAFE_CPU_SURVIVAL"
+  ],
+  "eligible_evidence_items": 0,
+  "evidence_not_ready": 31,
+  "held_unverified_items": 2221,
+  "results": [],
+  "schema": "multitab_visual_worker_state.v1",
+  "sealed_this_cycle": 0,
+  "smoke_pass": true,
+  "status": "WAITING_ELIGIBLE_EVIDENCE",
+  "target_workers": 8,
+  "updated_at": 1788130667.772886
+}

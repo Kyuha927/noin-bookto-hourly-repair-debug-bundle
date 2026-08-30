@@ -1,0 +1,33 @@
+{
+  "schema_version": "bookto_dual_runtime_binding.v1",
+  "lane_id": "bookto29_newto29_alltabs_20260825",
+  "generation": "bookto30-newto30-oldmac-smoke-g1",
+  "source_machine": "NewMac",
+  "updated_at_epoch": 1788127915,
+  "expires_at_epoch": 1788133315,
+  "newmac_config_sha256": "319e8e47efc5a29d7ab6cc6d909d77895248d008e2710eeba7c5d47f8ad6211b",
+  "oldmac_config_sha256": "b30d7b68519afccaf161d38e39259aa76cfb7b3b617cb70ade13e5da4ef38018",
+  "newmac_manifest_sha256": "3e0ce5a97141b7d814c38a141dbda646d9b988eb4ad058bb3ddcc03f20b470e7",
+  "oldmac_manifest_sha256": "758330fcb88daeeaaf5374af6e0812a0ac793c893a0f7f6f81892f6a933e46d3",
+  "pair_validation_sha256": "693b5c5e568cc9642c30042607ac3f49aaa382244ce08908c52e50976456289c",
+  "catalog_sha256": "bebbf66fffb989236e6325797d36cd627e555b60b8dccd7957febea15fc9f8c7",
+  "process_status_sha256": "bbe98bc02c1d2a7c02f5dc33ff6951fd23b16e13169760f00db5f58cb8240b2d",
+  "process_snapshot_sha256": "603492fcd379c8a7a6bd7952aab39af32355308ce259e2cafe97279996d4fe48",
+  "oldmac_item_key": "newto_fafa:234356",
+  "domain_suffix": 31,
+  "base_urls": {
+    "bookto": "https://ROTATING-HOST.example",
+    "newto": "https://ROTATING-HOST.example"
+  },
+  "counts": {
+    "catalog_total": 2803,
+    "newmac_assigned": 2802,
+    "oldmac_assigned": 1,
+    "intersection": 0,
+    "omission": 0,
+    "active_item_overlap": 0,
+    "production_workers": 3,
+    "model_children": 0,
+    "active_claims": 0
+  }
+}

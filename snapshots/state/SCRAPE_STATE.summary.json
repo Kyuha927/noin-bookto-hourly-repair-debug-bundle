@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "generation_id": "bookto29-newto29-alltabs-20260825-g1",
+  "catalog_count": 2803,
+  "updated_at": "2026-08-31T07:55:52+09:00",
+  "status_counts": {
+    "PASS": 119,
+    "PENDING_ROUTE_REFRESH": 1392,
+    "RECOVERY_REQUIRED": 82,
+    "RETRYABLE_ERROR": 193,
+    "SOURCE_RECOVERY_REQUIRED": 263
+  },
+  "oldest_nonpass": [
+    {
+      "item_key": "newto_fafa:256",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T01:44:58+09:00",
+      "error": "RuntimeError:CHAPTERS_EMPTY:newto_fafa:256"
+    },
+    {
+      "item_key": "newto_fafa:85504",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:09:11+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:85505",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:12:11+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29441",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:13:52+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234240",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:15:16+09:00",
+      "error": "RuntimeError:IMAGES_EMPTY:newto_fafa:234240:237509:https://ROTATING-HOST.example/bbs/board.php?bo_table=fafa&wr_id=237509&spage=1"
+    },
+    {
+      "item_key": "newto_fafa:234241",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:27:17+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:85506",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:28:20+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29442",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:29:29+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:258",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:43:58+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234242",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:55:04+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:259",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:57:44+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234244",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T02:59:27+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29445",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:05:32+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:260",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:11:18+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29446",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:16:18+09:00",
+      "error": "RuntimeError:IMAGES_EMPTY:newto_fafa:29446:36757:https://ROTATING-HOST.example/bbs/board.php?bo_table=fafa&wr_id=36757&spage=1"
+    },
+    {
+      "item_key": "newto_fafa:234246",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:18:54+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:263",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:19:18+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234245",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:19:22+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234247",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:20:06+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:264",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:20:13+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29449",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:20:14+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234249",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:20:27+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:234250",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:22:52+09:00",
+      "error": "CdpError:PAGE_NOT_READY:https://ROTATING-HOST.example/bbs/board.php?bo_table=fafa&wr_id=385308&spage=1"
+    },
+    {
+      "item_key": "newto_fafa:267",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:24:31+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    },
+    {
+      "item_key": "newto_fafa:29450",
+      "status": "RETRYABLE_ERROR",
+      "updated_at": "2026-08-26T03:25:34+09:00",
+      "error": "CdpError:CDP_NETWORK_BODY_MISSING:https://IMAGE-HOST.example/REDACTED"
+    }
+  ]
+}

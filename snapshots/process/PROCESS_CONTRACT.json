@@ -1,0 +1,148 @@
+{
+  "schema_version": "bookto_process_contract.v1",
+  "lane_id": "bookto29_newto29_alltabs_20260825",
+  "lane_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825",
+  "config_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+  "status_output_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/PROCESS_STATUS.json",
+  "model_wrapper_path": "/Users/NEWMAC/Documents/noin/tools/flash37_implementation_exec.sh",
+  "roles": [
+    {
+      "role_id": "scraper_controller",
+      "process_class": "controller",
+      "screen_name": "bookto29_newto29_alltabs_scraper",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_scraper_keepalive.sh",
+      "identity_tokens": [
+        "/Users/NEWMAC/Documents/webtoon/bookto_singleton.py",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/scraper.singleton.lock",
+        "/bin/bash",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_scraper_keepalive.sh"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": false,
+      "lock_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/scraper.singleton.lock",
+      "child_worker_tokens": [
+        "/Users/NEWMAC/Documents/webtoon/bookto_multitab_cdp.py",
+        "--config",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+        "--phase",
+        "scrape"
+      ]
+    },
+    {
+      "role_id": "preprocess_engine",
+      "process_class": "production_engine",
+      "screen_name": "bookto29_newto29_alltabs_preprocess",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_preprocess_keepalive.sh",
+      "identity_tokens": [
+        "/Users/NEWMAC/Documents/noin/tools/stream_preprocess_webtoon_images.py",
+        "--input-root",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/sources/images",
+        "--output-root",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/derivatives/preprocessed",
+        "--loop"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": true,
+      "lock_path": null,
+      "child_worker_tokens": []
+    },
+    {
+      "role_id": "ocr_engine",
+      "process_class": "production_engine",
+      "screen_name": "bookto29_newto29_alltabs_ocr",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_ocr_keepalive.sh",
+      "identity_tokens": [
+        "/Users/NEWMAC/Documents/noin/tools/run_webtoon_ocr_apple_vision.py",
+        "--input-root",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/derivatives/preprocessed/images",
+        "--output-root",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/derivatives/ocr",
+        "--webtoon-state",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json",
+        "--loop"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": true,
+      "lock_path": null,
+      "child_worker_tokens": []
+    },
+    {
+      "role_id": "learning_keepalive",
+      "process_class": "keepalive",
+      "screen_name": "bookto29_newto29_alltabs_learning",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_learning_keepalive.sh",
+      "identity_tokens": [
+        "login",
+        "-pflq",
+        "NEWMAC_USER",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_learning_keepalive.sh"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": false,
+      "lock_path": null,
+      "child_worker_tokens": []
+    },
+    {
+      "role_id": "visual_supervisor",
+      "process_class": "supervisor",
+      "screen_name": "bookto29_newto29_alltabs_visual",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_visual_worker.sh",
+      "identity_tokens": [
+        "/Users/NEWMAC/Documents/webtoon/bookto_multitab_visual_supervisor.py",
+        "--config",
+        "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+        "--workers",
+        "8",
+        "--loop"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": false,
+      "lock_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/visual_supervisor.singleton.lock",
+      "child_worker_tokens": []
+    },
+    {
+      "role_id": "visual_keepalive",
+      "process_class": "keepalive",
+      "screen_name": "bookto29_newto29_alltabs_visual_keepalive",
+      "launcher_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_visual_keepalive.sh",
+      "identity_tokens": [
+        "/Users/NEWMAC/Documents/webtoon/bookto_multitab_visual_keepalive.py"
+      ],
+      "expected_processes": 1,
+      "counts_as_production_worker": false,
+      "lock_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/runtime/visual_keepalive.singleton.lock",
+      "child_worker_tokens": []
+    }
+  ],
+  "generation_workers": {
+    "screen_pattern": "^bookto29_alltabs_b(?P<batch>[0-9]{4})_(?P<role>author|qa)$",
+    "generation_root": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/learning_generations",
+    "worker_script": "/Users/NEWMAC/.codex/skills/bookto-dual-mac-final-learning/scripts/bookto_final_learning.py",
+    "active_generation_path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/ACTIVE_GENERATION.json",
+    "terminal_value": "ALL_DEFINED_WORK_DONE_AND_VERIFIED"
+  },
+  "state_counters": [
+    {
+      "name": "visual_claims",
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json",
+      "json_key": "active_claim_slots"
+    }
+  ],
+  "capacities": [
+    {
+      "name": "scrape_slots",
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+      "json_key": "workers"
+    },
+    {
+      "name": "learning_slots",
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+      "json_key": "learning_workers"
+    },
+    {
+      "name": "visual_slots",
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/multitab_config.json",
+      "json_key": "visual_workers"
+    }
+  ]
+}

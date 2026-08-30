@@ -1,0 +1,169 @@
+{
+  "backlog_remaining": true,
+  "canonical_state_observed_at_epoch": 1788128022.6329448,
+  "completed_at_epoch": 1788128022.6784482,
+  "contract_id": "noin-bookto29-newto29-alltabs-hourly-repair",
+  "contract_sha256": "e6e4342bd9b99e9b80245bd2e44fe8a4ecca36ea1a3983b12941f2016c3f668f",
+  "disk": {
+    "free_bytes": 193264242688,
+    "free_percent": 19.43,
+    "total_bytes": 994662584320
+  },
+  "duplicate_claims": 0,
+  "escalation_executed": false,
+  "external_priority": {
+    "held_unverified": 2221,
+    "unverified": 2755,
+    "verified": 48
+  },
+  "manual_external_gate": false,
+  "movement": true,
+  "movement_evidence": [
+    {
+      "after_sha256": "952bae37b19a2cbecb2b1bc1cc00643d4825e99299b657685027041eac4c6290",
+      "before_sha256": "952bae37b19a2cbecb2b1bc1cc00643d4825e99299b657685027041eac4c6290",
+      "moved": false,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/SCRAPE_STATE.json"
+    },
+    {
+      "after_sha256": "13da87c236f1126be903eda3725f66c84ded8f8d20bbeed4f22f2c45944f295a",
+      "before_sha256": "13da87c236f1126be903eda3725f66c84ded8f8d20bbeed4f22f2c45944f295a",
+      "moved": false,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json"
+    },
+    {
+      "after_sha256": "d429b316fc18be242aa3ca849baddf28cf9190fb1c5bf3d5482baf91c82c68d8",
+      "before_sha256": "1e55c23ddbffc3efc0e633482625c54fc8262525df6adca1401ad546094ba9e7",
+      "moved": true,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_INTAKE_STATE.json"
+    },
+    {
+      "after_sha256": "457e8f9969e002a829e7d14660d38f99892c90a5cd20000e6d918880540d3b4a",
+      "before_sha256": "b33a5ec16f848e5c897800586f331728fc92fe6094b81316fca9cf4426f288e1",
+      "moved": true,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json"
+    }
+  ],
+  "oldmac": {
+    "binding_state": "PASS",
+    "domain_suffix": 31,
+    "gateway_status": "PASS",
+    "item_key": "newto_fafa:234356",
+    "item_status": "PASS",
+    "remote_binding": "PASS",
+    "remote_route_sync": "NOOP"
+  },
+  "original_output_movement": {
+    "before_bytes": 342349839,
+    "before_files": 1668,
+    "bytes": 460912565,
+    "files": 2154,
+    "item_key": "newto_fafaend:32486",
+    "moved": true,
+    "newest_mtime_ns": 1788128022250671496,
+    "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/sources/images/newto_fafaend_32486__당신의 파멸에 신의 축복을"
+  },
+  "process": {
+    "actual_production_workers": 3,
+    "claims": 0,
+    "configured_capacity": {
+      "learning_slots": 4,
+      "scrape_slots": 4,
+      "visual_slots": 8
+    },
+    "model_children": 0,
+    "status": "PASS"
+  },
+  "protected_state_preserved": true,
+  "repair": {
+    "count": 0,
+    "executed": false,
+    "item_key": null,
+    "post_repair_verified": false
+  },
+  "retry": {
+    "diagnostic_route_changed": false,
+    "same_failure_count": 0
+  },
+  "run_id": "20260831T071342+0900-fe292947",
+  "schema_version": "global_fresh_state_cycle_receipt.v1",
+  "stage_counts": {
+    "devices": {
+      "completed": 67,
+      "remaining": 2736
+    },
+    "include_registry": {
+      "completed_unique": 67,
+      "remaining": 2736
+    },
+    "learning": {
+      "completed": 67,
+      "remaining": 2736
+    },
+    "ocr": {
+      "completed": 330,
+      "remaining": 2473
+    },
+    "qa": {
+      "completed": 67,
+      "remaining": 2736
+    },
+    "scrape": {
+      "completed": 119,
+      "remaining": 2684
+    },
+    "total": 2803,
+    "visual": {
+      "completed": 1,
+      "remaining": 2802
+    }
+  },
+  "state_readback": [
+    {
+      "mtime_ns": 1788127915636113343,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/PROCESS_STATUS.json",
+      "sha256": "bbe98bc02c1d2a7c02f5dc33ff6951fd23b16e13169760f00db5f58cb8240b2d"
+    },
+    {
+      "mtime_ns": 1788127225125894770,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/SCRAPE_STATE.json",
+      "sha256": "952bae37b19a2cbecb2b1bc1cc00643d4825e99299b657685027041eac4c6290"
+    },
+    {
+      "mtime_ns": 1787603325106353765,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/WEBTOON_STATE.json",
+      "sha256": "13da87c236f1126be903eda3725f66c84ded8f8d20bbeed4f22f2c45944f295a"
+    },
+    {
+      "mtime_ns": 1788128002231307403,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/LEARNING_INTAKE_STATE.json",
+      "sha256": "d429b316fc18be242aa3ca849baddf28cf9190fb1c5bf3d5482baf91c82c68d8"
+    },
+    {
+      "mtime_ns": 1788128019664896803,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/VISUAL_WORKER_STATE.json",
+      "sha256": "457e8f9969e002a829e7d14660d38f99892c90a5cd20000e6d918880540d3b4a"
+    },
+    {
+      "mtime_ns": 1788033620712997547,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/ACTIVE_GENERATION.json",
+      "sha256": "99e90836f560c425c9a5e138da25dbac3dc68f21d1ea7a393fe149a86449a7b8"
+    },
+    {
+      "mtime_ns": 1788126559778917705,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/NEWMAC_CHROME_CONTROL.json",
+      "sha256": "48dd8a0c327dd2debd93a6acdad69abc95aceb819ee105d80b483273eb3092f7"
+    },
+    {
+      "mtime_ns": 1788127915933455258,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/NEWMAC_RUNTIME_BINDING.json",
+      "sha256": "c0dfa58d78011a28dba7ab214eca8649aef5a715aa76c2639b08d6b30e907000"
+    },
+    {
+      "mtime_ns": 1788125452063018116,
+      "path": "/Users/NEWMAC/Documents/webtoon/bookto29_newto29_alltabs_20260825/distributed/bookto30-newto30-oldmac-smoke-g1/PAIR_VALIDATION.json",
+      "sha256": "693b5c5e568cc9642c30042607ac3f49aaa382244ce08908c52e50976456289c"
+    }
+  ],
+  "status_only": false
+}
