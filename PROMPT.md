@@ -6,7 +6,20 @@ Analyze this repository in full:
 
 https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle
 
-The concrete defect is described in `ISSUE.md`. Begin with `README.md`, `ISSUE.md`, and `metadata/SOURCE_HASHES.tsv`, then inspect the contract, automation prompt, receipt validator, process checker, scraper ownership code, current sanitized state summaries, the five recent receipts, and regression tests.
+Open these key files directly before reviewing the rest of the repository:
+
+- Scope and sanitization: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/README.md
+- Concrete defect: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/ISSUE.md
+- Source snapshot hashes: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/metadata/SOURCE_HASHES.tsv
+- Fresh-state contract: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/snapshots/contracts/fresh_state_contract.json
+- Receipt validator: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/snapshots/hooks/fresh_state_receipt_validation.py
+- Process checker: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/main/snapshots/process/bookto29_newto29_alltabs_process_check.sh
+- Sanitized state summaries: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/tree/main/snapshots/state
+- Five recent cycle receipts: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/tree/main/snapshots/receipts
+- Scraper ownership and persistence code: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/tree/main/snapshots/scraper
+- Regression tests: https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/tree/main/snapshots/tests
+
+The concrete defect is described in `ISSUE.md`. After the key files, inspect the automation prompt, scraper ownership code, controls, current sanitized state summaries, the five recent receipts, and regression tests.
 
 Your task is not to suggest generic troubleshooting. Determine why an hourly repair automation that explicitly forbids status-only cycles can repeatedly finish without repairing the oldest independently actionable blocker.
 
