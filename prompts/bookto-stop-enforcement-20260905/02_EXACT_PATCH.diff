@@ -1,0 +1,1259 @@
+--- a/installed/.codex/hooks/fresh_state_cycle_evidence.py
++++ b/installed/.codex/hooks/fresh_state_cycle_evidence.py
+@@ -2,14 +2,18 @@
+ 
+ from __future__ import annotations
+ 
++import json
+ import time
+ from pathlib import Path
+-from typing import Any, NamedTuple
++from typing import Any, Final, NamedTuple
+ 
+-from fresh_state_contract import Contract, GuardError, load_mapping
++from fresh_state_contract import Contract, GuardError, load_mapping, sha256_bytes
+ from fresh_state_semantics import SemanticDelta
+ 
++ACTION_EVIDENCE_SCHEMA: Final = "fresh_state_cycle_action_evidence.v1"
++ManualFingerprint = tuple[str, str, str, str]
+ 
++
+ class CycleAction(NamedTuple):
+     repair_executed: bool
+     repair_verified: bool
+@@ -21,8 +25,17 @@
+     evidence_kind: str
+     same_failure_count: int
+     diagnostic_route_changed: bool
++    manual_gate_fingerprint: ManualFingerprint | None
+ 
+ 
++class HistoryAction(NamedTuple):
++    item_key: str
++    failure_signature: str
++    route_id: str
++    evidence_kind: str
++    manual_gate_fingerprint: ManualFingerprint | None
++
++
+ def _run_id(raw: dict[str, Any]) -> str:
+     value = raw.get("run_id")
+     return value if isinstance(value, str) and value else ""
+@@ -57,7 +70,7 @@
+     return selected[0] if selected else None
+ 
+ 
+-def _manual_fingerprint(row: dict[str, Any]) -> tuple[str, str, str, str]:
++def _manual_fingerprint(row: dict[str, Any]) -> ManualFingerprint:
+     gate = row.get("gate_readback")
+     if not isinstance(gate, dict):
+         raise GuardError("FRESH_STATE_MANUAL_GATE_INVALID", "gate_readback")
+@@ -81,14 +94,143 @@
+     return (str(values[0]), str(values[1]), str(values[2]), str(values[3]))
+ 
+ 
+-def _sealed_run_ids(root: Path) -> list[str]:
+-    result: list[str] = []
++def sealed_payload_sha256(raw: dict[str, Any]) -> str:
++    payload = dict(raw)
++    seal = payload.get("stop_finalization_seal")
++    if isinstance(seal, dict):
++        normalized_seal = dict(seal)
++        normalized_seal.pop("sealed_payload_sha256", None)
++        payload["stop_finalization_seal"] = normalized_seal
++    encoded = json.dumps(
++        payload,
++        ensure_ascii=False,
++        sort_keys=True,
++        separators=(",", ":"),
++    ).encode()
++    return sha256_bytes(encoded)
++
++
++def action_evidence_record(action: CycleAction) -> dict[str, Any]:
++    return {
++        "schema_version": ACTION_EVIDENCE_SCHEMA,
++        "item_key": action.item_key,
++        "failure_signature": action.failure_signature,
++        "diagnostic_route": action.route_id,
++        "evidence_kind": action.evidence_kind,
++        "manual_gate_fingerprint": (
++            list(action.manual_gate_fingerprint)
++            if action.manual_gate_fingerprint is not None
++            else None
++        ),
++    }
++
++
++def _embedded_history_action(
++    row: dict[str, Any], path: Path
++) -> HistoryAction | None:
++    value = row.get("cycle_action_evidence")
++    if value is None:
++        return None
++    seal = row.get("stop_finalization_seal")
++    if not isinstance(value, dict) or not isinstance(seal, dict):
++        raise GuardError("FRESH_STATE_HISTORY_SEAL_INVALID", str(path))
++    expected = seal.get("sealed_payload_sha256")
++    if (
++        not isinstance(expected, str)
++        or expected != sealed_payload_sha256(row)
++        or value.get("schema_version") != ACTION_EVIDENCE_SCHEMA
++    ):
++        raise GuardError("FRESH_STATE_HISTORY_SEAL_INVALID", str(path))
++    fields = (
++        value.get("item_key"),
++        value.get("failure_signature"),
++        value.get("diagnostic_route"),
++        value.get("evidence_kind"),
++    )
++    if not all(isinstance(field, str) for field in fields):
++        raise GuardError("FRESH_STATE_HISTORY_SEAL_INVALID", str(path))
++    raw_fingerprint = value.get("manual_gate_fingerprint")
++    fingerprint: ManualFingerprint | None
++    if raw_fingerprint is None:
++        fingerprint = None
++    elif (
++        isinstance(raw_fingerprint, list)
++        and len(raw_fingerprint) == 4
++        and all(isinstance(field, str) and field for field in raw_fingerprint)
++    ):
++        fingerprint = (
++            raw_fingerprint[0],
++            raw_fingerprint[1],
++            raw_fingerprint[2],
++            raw_fingerprint[3],
++        )
++    else:
++        raise GuardError("FRESH_STATE_HISTORY_SEAL_INVALID", str(path))
++    return HistoryAction(
++        item_key=fields[0],
++        failure_signature=fields[1],
++        route_id=fields[2],
++        evidence_kind=fields[3],
++        manual_gate_fingerprint=fingerprint,
++    )
++
++
++def _legacy_history_actions(root: Path, run_id: str) -> list[HistoryAction]:
++    actions: list[HistoryAction] = []
++    for row in _artifact_rows(root, run_id):
++        fingerprint: ManualFingerprint | None = None
++        if row.get("manual_external_gate") is True:
++            try:
++                fingerprint = _manual_fingerprint(row)
++            except GuardError:
++                pass
++        values = (
++            row.get("item_key"),
++            row.get("failure_signature"),
++            row.get("diagnostic_route"),
++            row.get("schema_version"),
++        )
++        actions.append(
++            HistoryAction(
++                item_key=values[0] if isinstance(values[0], str) else "",
++                failure_signature=(
++                    values[1] if isinstance(values[1], str) else ""
++                ),
++                route_id=values[2] if isinstance(values[2], str) else "",
++                evidence_kind=values[3] if isinstance(values[3], str) else "",
++                manual_gate_fingerprint=fingerprint,
++            )
++        )
++    return actions
++
++
++def _sealed_history(
++    contract: Contract, current_run_id: str
++) -> list[list[HistoryAction]]:
++    result: list[list[HistoryAction]] = []
++    seen_run_ids: set[str] = set()
++    root = contract.receipt_root
+     for path in sorted(root.glob("*.stop-finalized.json")):
+         row = load_mapping(path)
+         run_id = row.get("run_id")
+         seal = row.get("stop_finalization_seal")
+-        if isinstance(run_id, str) and run_id and isinstance(seal, dict):
+-            result.append(run_id)
++        if (
++            not isinstance(run_id, str)
++            or not run_id
++            or run_id == current_run_id
++            or run_id in seen_run_ids
++            or row.get("contract_id") != contract.contract_id
++            or not isinstance(seal, dict)
++            or seal.get("protocol") != "canonical_snapshot_v1"
++        ):
++            continue
++        seen_run_ids.add(run_id)
++        embedded = _embedded_history_action(row, path)
++        result.append(
++            [embedded]
++            if embedded is not None
++            else _legacy_history_actions(root, run_id)
++        )
+     return result
+ 
+ 
+@@ -96,27 +238,27 @@
+     contract: Contract,
+     item_key: str,
+     failure_signature: str,
+-) -> tuple[int, str, str, set[tuple[str, str, str, str]]]:
++    current_run_id: str,
++) -> tuple[int, str, str, set[ManualFingerprint]]:
+     count = 0
+     latest_route = ""
+     latest_kind = ""
+-    fingerprints: set[tuple[str, str, str, str]] = set()
+-    for run_id in _sealed_run_ids(contract.receipt_root):
+-        for row in _artifact_rows(contract.receipt_root, run_id):
+-            if row.get("manual_external_gate") is True:
+-                try:
+-                    fingerprints.add(_manual_fingerprint(row))
+-                except GuardError:
+-                    pass
++    fingerprints: set[ManualFingerprint] = set()
++    for actions in _sealed_history(contract, current_run_id):
++        matching: HistoryAction | None = None
++        for action in actions:
++            if action.manual_gate_fingerprint is not None:
++                fingerprints.add(action.manual_gate_fingerprint)
+             if (
+-                row.get("item_key") == item_key
+-                and row.get("failure_signature") == failure_signature
++                matching is None
++                and action.item_key == item_key
++                and action.failure_signature == failure_signature
+             ):
+-                count += 1
+-                route = row.get("diagnostic_route")
+-                kind = row.get("schema_version")
+-                latest_route = route if isinstance(route, str) else ""
+-                latest_kind = kind if isinstance(kind, str) else ""
++                matching = action
++        if matching is not None:
++            count += 1
++            latest_route = matching.route_id
++            latest_kind = matching.evidence_kind
+     return count, latest_route, latest_kind, fingerprints
+ 
+ 
+@@ -144,8 +286,8 @@
+     rows = _artifact_rows(contract.receipt_root, run_id)
+     escalation_row = _single(rows, "escalation_executed", escalation_claimed)
+     manual_row = _single(rows, "manual_external_gate", manual_claimed)
+-    repair_row = _single(rows, "repair_executed", False)
+-    repair_claimed = repair_claimed or repair_row is not None
++    repair_row = _single(rows, "repair_executed", repair_claimed)
++    repair_claimed = repair_row is not None
+     action_row = manual_row or escalation_row or repair_row
+     if action_row is not None:
+         _validate_fresh_evidence(action_row, contract)
+@@ -170,11 +312,6 @@
+             item_key in delta.changed_items
+             or item_key in delta.moved_items
+             or (delta.oldest_blocker is None and delta.raw_progress)
+-            or (
+-                repair_row is not None
+-                and repair_row.get("post_repair_verified") is True
+-                and repair_row.get("item_key") == item_key
+-            )
+         )
+     )
+     if repair_claimed and not repair_verified:
+@@ -186,7 +323,7 @@
+     else:
+         fingerprint = None
+     prior_count, prior_route, prior_kind, prior_fingerprints = (
+-        _history(contract, item_key, failure_signature)
++        _history(contract, item_key, failure_signature, run_id)
+         if item_key and failure_signature
+         else (0, "", "", set())
+     )
+@@ -227,4 +364,5 @@
+         evidence_kind=evidence_kind,
+         same_failure_count=same_failure_count,
+         diagnostic_route_changed=route_changed,
++        manual_gate_fingerprint=fingerprint,
+     )
+--- a/installed/.codex/hooks/fresh_state_receipt_validation.py
++++ b/installed/.codex/hooks/fresh_state_receipt_validation.py
+@@ -5,7 +5,7 @@
+ from typing import Any, NamedTuple
+ 
+ from fresh_state_contract import Contract, GuardError, sha256_bytes
+-from fresh_state_cycle_evidence import derive_cycle_action
++from fresh_state_cycle_evidence import action_evidence_record, derive_cycle_action
+ from fresh_state_ownership import ownership_snapshot
+ from fresh_state_semantic_snapshot import capture_immutable_semantics
+ from fresh_state_semantics import SemanticDelta, derive_semantic_delta
+@@ -221,6 +221,7 @@
+     }
+     raw["escalation_executed"] = action.escalation_executed
+     raw["manual_external_gate"] = action.manual_external_gate
++    raw["cycle_action_evidence"] = action_evidence_record(action)
+     raw["duplicate_claims"] = ownership.duplicate_claims
+     raw["protected_state_preserved"] = (
+         not delta.regression and ownership.duplicate_claims == 0
+--- a/installed/.codex/hooks/fresh_state_receipt.py
++++ b/installed/.codex/hooks/fresh_state_receipt.py
+@@ -11,6 +11,7 @@
+ from typing import Any, Final
+ 
+ from fresh_state_contract import Contract, GuardError, load_mapping, sha256_bytes
++from fresh_state_cycle_evidence import sealed_payload_sha256
+ from fresh_state_receipt_validation import (
+     ReceiptValidationContext,
+     readback_rows,
+@@ -72,6 +73,14 @@
+                 )
+             else:
+                 hashes = {row["path"]: row["sha256"] for row in snapshot}
++                if any(
++                    hashes[str(path)] != receipt_hashes[str(path)]
++                    for path in contract.progress_paths
++                ):
++                    raise GuardError(
++                        "FRESH_STATE_FINALIZATION_PROGRESS_RACE",
++                        contract.contract_id,
++                    )
+                 movement_rows = [
+                     {
+                         "path": str(path),
+@@ -121,6 +130,9 @@
+         "source_receipt_sha256": marker.group("sha"),
+         "linearized_at_epoch": finalized["canonical_state_observed_at_epoch"],
+     }
++    sealed["stop_finalization_seal"]["sealed_payload_sha256"] = (
++        sealed_payload_sha256(sealed)
++    )
+     encoded = (json.dumps(sealed, sort_keys=True) + "\n").encode()
+     with tempfile.NamedTemporaryFile(
+         "wb", dir=finalized_path.parent, delete=False
+--- a/installed/.codex/hooks/fresh_state_ownership.py
++++ b/installed/.codex/hooks/fresh_state_ownership.py
+@@ -17,6 +17,8 @@
+     model_children: int
+     scraper_target_claims: int
+     ambiguous_claims: int
++    scraper_worker_processes: int
++    unbound_scraper_workers: int
+ 
+ 
+ def _integer(value: object, field: str) -> int:
+@@ -25,6 +27,30 @@
+     return value
+ 
+ 
++def _scraper_worker_pids(process: dict[str, Any]) -> set[int]:
++    roles = process.get("roles")
++    if process.get("status") != "PASS" or not isinstance(roles, list):
++        raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "process status")
++    scraper_roles = [
++        role
++        for role in roles
++        if isinstance(role, dict) and role.get("role_id") == "scraper_controller"
++    ]
++    if len(scraper_roles) != 1 or scraper_roles[0].get("status") != "PASS":
++        raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "scraper role")
++    raw_pids = scraper_roles[0].get("worker_pids")
++    if not isinstance(raw_pids, list):
++        raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "scraper worker_pids")
++    pids: set[int] = set()
++    for value in raw_pids:
++        if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
++            raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "scraper worker_pid")
++        pids.add(value)
++    if len(pids) != len(raw_pids):
++        raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "scraper worker_pids")
++    return pids
++
++
+ def _live_targets(port: int) -> set[str]:
+     connection = http.client.HTTPConnection("127.0.0.1", port, timeout=2)
+     try:
+@@ -58,12 +84,15 @@
+         raise GuardError("FRESH_STATE_OWNERSHIP_INVALID", "process counts")
+     active_claims = _integer(counts.get("active_claims"), "active_claims")
+     model_children = _integer(counts.get("model_children"), "model_children")
++    scraper_worker_pids = _scraper_worker_pids(process)
+     item_keys: list[str] = []
++    marker_worker_pids: set[int] = set()
+     ambiguous = 0
+     for path, marker in markers:
+         target_id = marker.get("target_id")
+         item_key = marker.get("item_key")
+         port = marker.get("cdp_port")
++        worker_pid = marker.get("worker_pid")
+         if (
+             marker.get("schema") != "bookto_multitab_background_target_v1"
+             or not isinstance(target_id, str)
+@@ -73,21 +102,31 @@
+             or not isinstance(port, int)
+             or isinstance(port, bool)
+             or port <= 0
++            or not isinstance(worker_pid, int)
++            or isinstance(worker_pid, bool)
++            or worker_pid <= 0
+         ):
+             ambiguous += 1
+             continue
+         item_keys.append(item_key)
++        marker_worker_pids.add(worker_pid)
+         if target_id not in live_targets.get(port, set()):
+             ambiguous += 1
++        if worker_pid not in scraper_worker_pids:
++            ambiguous += 1
++    unbound_worker_pids = scraper_worker_pids - marker_worker_pids
++    ambiguous += len(unbound_worker_pids)
+     duplicate_markers = sum(
+         count - 1 for count in Counter(item_keys).values() if count > 1
+     )
+     return OwnershipSnapshot(
+         duplicate_claims=duplicate_markers + ambiguous,
+-        active_claims=active_claims + len(item_keys),
++        active_claims=active_claims + len(item_keys) + len(unbound_worker_pids),
+         model_children=model_children,
+         scraper_target_claims=len(item_keys),
+         ambiguous_claims=ambiguous,
++        scraper_worker_processes=len(scraper_worker_pids),
++        unbound_scraper_workers=len(unbound_worker_pids),
+     )
+ 
+ 
+@@ -101,7 +140,7 @@
+         None,
+     )
+     if process_path is None:
+-        return OwnershipSnapshot(0, 0, 0, 0, 0)
++        return OwnershipSnapshot(0, 0, 0, 0, 0, 0, 0)
+     process = load_mapping(process_path)
+     marker_dir = process_path.parent / "runtime" / "scraper_targets"
+     markers: list[tuple[Path, dict[str, Any]]] = []
+--- a/installed/.codex/hooks/test_fresh_state_cycle_evidence.py
++++ b/installed/.codex/hooks/test_fresh_state_cycle_evidence.py
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import hashlib
+ import json
+ import tempfile
+ import time
+@@ -78,11 +79,45 @@
+         self.write(
+             f"{run_id}.stop-finalized.json",
+             {
++                "contract_id": self.contract.contract_id,
+                 "run_id": run_id,
+                 "stop_finalization_seal": {"protocol": "canonical_snapshot_v1"},
+             },
+         )
+ 
++    def seal_action(
++        self,
++        run_id: str,
++        *,
++        route: str = "route-v1",
++        kind: str = "diagnostic.v1",
++        manual_fingerprint: tuple[str, str, str, str] | None = None,
++    ) -> Path:
++        row: dict[str, object] = {
++            "contract_id": self.contract.contract_id,
++            "run_id": run_id,
++            "cycle_action_evidence": {
++                "schema_version": "fresh_state_cycle_action_evidence.v1",
++                "item_key": "item:a",
++                "failure_signature": "FAIL:a",
++                "diagnostic_route": route,
++                "evidence_kind": kind,
++                "manual_gate_fingerprint": (
++                    list(manual_fingerprint)
++                    if manual_fingerprint is not None
++                    else None
++                ),
++            },
++            "stop_finalization_seal": {"protocol": "canonical_snapshot_v1"},
++        }
++        encoded = json.dumps(row, sort_keys=True, separators=(",", ":")).encode()
++        seal = row["stop_finalization_seal"]
++        assert isinstance(seal, dict)
++        seal["sealed_payload_sha256"] = hashlib.sha256(encoded).hexdigest()
++        path = self.root / f"{run_id}.stop-finalized.json"
++        path.write_text(json.dumps(row), encoding="utf-8")
++        return path
++
+     def diagnostic(self, run_id: str, route: str, kind: str) -> dict[str, object]:
+         return {
+             "schema_version": kind,
+@@ -131,6 +166,51 @@
+                 self.raw("current", manual=True), self.contract, self.delta()
+             )
+ 
++    def test_sealed_manual_gate_survives_mutable_artifact_deletion(self) -> None:
++        fingerprint = (
++            "item:a",
++            "FAIL:a",
++            "manual-route-v1",
++            "provide source",
++        )
++        self.seal_action("prior", manual_fingerprint=fingerprint)
++        self.write("current_manual.json", self.manual("current"))
++
++        with self.assertRaisesRegex(GuardError, "FRESH_STATE_MANUAL_GATE_REUSED"):
++            derive_cycle_action(
++                self.raw("current", manual=True), self.contract, self.delta()
++            )
++
++    def test_sealed_retry_history_survives_mutable_artifact_deletion(self) -> None:
++        for run_id in ("prior-1", "prior-2"):
++            self.seal_action(run_id)
++        self.write(
++            "current_diagnostic.json",
++            self.diagnostic("current", "route-v2", "diagnostic.v2"),
++        )
++
++        action = derive_cycle_action(
++            self.raw("current", escalation=True), self.contract, self.delta()
++        )
++
++        self.assertEqual(action.same_failure_count, 3)
++        self.assertTrue(action.diagnostic_route_changed)
++
++    def test_tampered_sealed_history_fails_closed(self) -> None:
++        path = self.seal_action("prior")
++        row = json.loads(path.read_text(encoding="utf-8"))
++        row["cycle_action_evidence"]["diagnostic_route"] = "tampered"
++        path.write_text(json.dumps(row), encoding="utf-8")
++        self.write(
++            "current_diagnostic.json",
++            self.diagnostic("current", "route-v2", "diagnostic.v2"),
++        )
++
++        with self.assertRaisesRegex(GuardError, "FRESH_STATE_HISTORY_SEAL_INVALID"):
++            derive_cycle_action(
++                self.raw("current", escalation=True), self.contract, self.delta()
++            )
++
+     def test_third_failure_requires_new_route_and_evidence_kind(self) -> None:
+         for run_id in ("prior-1", "prior-2"):
+             self.seal(run_id)
+@@ -177,6 +257,19 @@
+             "item_key": "item:a",
+             "post_repair_verified": True,
+         }
++        self.write(
++            "current_repair.json",
++            {
++                "schema_version": "repair.v1",
++                "run_id": "current",
++                "observed_at_epoch": time.time(),
++                "item_key": "item:a",
++                "failure_signature": "FAIL:a",
++                "diagnostic_route": "repair-route-v1",
++                "repair_executed": True,
++                "post_repair_verified": True,
++            },
++        )
+ 
+         action = derive_cycle_action(
+             raw,
+@@ -186,6 +279,44 @@
+ 
+         self.assertTrue(action.repair_verified)
+ 
++    def test_self_asserted_repair_without_action_evidence_is_rejected(self) -> None:
++        raw = self.raw("current")
++        raw["repair"] = {
++            "count": 1,
++            "executed": True,
++            "item_key": "item:a",
++            "post_repair_verified": True,
++        }
+ 
++        with self.assertRaisesRegex(GuardError, "FRESH_STATE_ACTION_EVIDENCE_INVALID"):
++            derive_cycle_action(
++                raw,
++                self.contract,
++                self.delta(changed=("item:a",)),
++            )
++
++    def test_post_repair_flag_without_semantic_change_is_rejected(self) -> None:
++        self.write(
++            "current_repair.json",
++            {
++                "schema_version": "repair.v1",
++                "run_id": "current",
++                "observed_at_epoch": time.time(),
++                "item_key": "item:a",
++                "failure_signature": "FAIL:a",
++                "diagnostic_route": "repair-route-v1",
++                "repair_executed": True,
++                "post_repair_verified": True,
++            },
++        )
++
++        with self.assertRaisesRegex(GuardError, "FRESH_STATE_REPAIR_INVALID"):
++            derive_cycle_action(
++                self.raw("current"),
++                self.contract,
++                self.delta(),
++            )
++
++
+ if __name__ == "__main__":
+     unittest.main()
+--- a/installed/.codex/hooks/test_fresh_state_ownership.py
++++ b/installed/.codex/hooks/test_fresh_state_ownership.py
+@@ -7,8 +7,22 @@
+ from fresh_state_ownership import reconcile_ownership
+ 
+ 
+-def process(active_claims: object = 0, model_children: object = 0) -> dict[str, object]:
++def process(
++    active_claims: object = 0,
++    model_children: object = 0,
++    scraper_worker_pids: object = (410,),
++) -> dict[str, object]:
+     return {
++        "status": "PASS",
++        "roles": [
++            {
++                "role_id": "scraper_controller",
++                "status": "PASS",
++                "worker_pids": list(scraper_worker_pids)
++                if isinstance(scraper_worker_pids, tuple)
++                else scraper_worker_pids,
++            }
++        ],
+         "counts": {
+             "active_claims": active_claims,
+             "model_children": model_children,
+@@ -17,7 +31,7 @@
+ 
+ 
+ def marker(
+-    name: str, item_key: str, port: int = 9240
++    name: str, item_key: str, port: int = 9240, worker_pid: object = 410
+ ) -> tuple[Path, dict[str, object]]:
+     return (
+         Path(f"/lane/runtime/scraper_targets/{name}.json"),
+@@ -26,6 +40,7 @@
+             "target_id": name,
+             "cdp_port": port,
+             "item_key": item_key,
++            "worker_pid": worker_pid,
+         },
+     )
+ 
+@@ -60,6 +75,48 @@
+         self.assertEqual(result.ambiguous_claims, 1)
+         self.assertEqual(result.duplicate_claims, 1)
+ 
++    def test_marker_owner_must_match_live_scraper_worker(self) -> None:
++        result = reconcile_ownership(
++            process(scraper_worker_pids=(410,)),
++            [marker("target-1", "item:a", worker_pid=999)],
++            {9240: {"target-1"}},
++        )
++
++        self.assertEqual(result.ambiguous_claims, 2)
++        self.assertEqual(result.duplicate_claims, 2)
++        self.assertEqual(result.unbound_scraper_workers, 1)
++
++    def test_missing_marker_owner_is_ambiguous(self) -> None:
++        path, value = marker("target-1", "item:a")
++        del value["worker_pid"]
++
++        result = reconcile_ownership(
++            process(),
++            [(path, value)],
++            {9240: {"target-1"}},
++        )
++
++        self.assertEqual(result.ambiguous_claims, 2)
++        self.assertEqual(result.duplicate_claims, 2)
++
++    def test_unbound_scraper_worker_is_ambiguous(self) -> None:
++        result = reconcile_ownership(process(), [], {})
++
++        self.assertEqual(result.active_claims, 1)
++        self.assertEqual(result.ambiguous_claims, 1)
++        self.assertEqual(result.duplicate_claims, 1)
++        self.assertEqual(result.unbound_scraper_workers, 1)
++
++    def test_idle_scraper_has_no_ownership_ambiguity(self) -> None:
++        result = reconcile_ownership(
++            process(scraper_worker_pids=()),
++            [],
++            {},
++        )
++
++        self.assertEqual(result.active_claims, 0)
++        self.assertEqual(result.duplicate_claims, 0)
++
+     def test_boolean_process_counter_fails_closed(self) -> None:
+         with self.assertRaisesRegex(GuardError, "FRESH_STATE_OWNERSHIP_INVALID"):
+             reconcile_ownership(process(active_claims=False), [], {})
+--- a/installed/.codex/hooks/test_fresh_state_guard.sh
++++ b/installed/.codex/hooks/test_fresh_state_guard.sh
+@@ -125,6 +125,7 @@
+     }
+ 
+ progress_hash = evidence(progress_path)["sha256"]
++run_id = f"fixture-{mode}"
+ movement = mode in {
+     "pass",
+     "retry",
+@@ -143,6 +144,7 @@
+     ),
+     "contract_id": "fixture-hourly",
+     "contract_sha256": os.environ["CONTRACT_SHA"],
++    "run_id": run_id,
+     "canonical_state_observed_at_epoch": now,
+     "completed_at_epoch": (
+         now - 1000 if mode in {"stale", "race-safe-stale"} else now
+@@ -181,6 +183,24 @@
+ }
+ if mode.startswith("race-safe"):
+     receipt["stop_finalization_protocol"] = "canonical_snapshot_v1"
++if repair:
++    action_path = Path(receipt_path).parent / f"{run_id}_repair_action_evidence.json"
++    action_path.write_text(
++        json.dumps(
++            {
++                "schema_version": "repair.v1",
++                "run_id": run_id,
++                "observed_at_epoch": now,
++                "item_key": "fixture:item",
++                "failure_signature": "FIXTURE_REPAIR",
++                "diagnostic_route": "fixture-repair-v1",
++                "repair_executed": True,
++                "post_repair_verified": True,
++            },
++            sort_keys=True,
++        ),
++        encoding="utf-8",
++    )
+ with open(receipt_path, "w", encoding="utf-8") as handle:
+     json.dump(receipt, handle, sort_keys=True)
+ PY
+@@ -208,8 +228,8 @@
+ make_receipt race-safe "$receipt_root/race-semantic-churn.json"
+ printf '%s\n' '{"completed":1,"remaining":9,"updated_at":"race-churn-two"}' > "$progress_path"
+ run_stop "$receipt_root/race-semantic-churn.json" "$fresh_guard_tmp/race-semantic-churn-stop.json"
+-if ! grep -F 'FRESH_STATE_SEMANTIC_MOVEMENT_INVALID' "$fresh_guard_tmp/race-semantic-churn-stop.json" >/dev/null; then
+-  echo 'RED: Stop finalization absorbed unrelated timestamp churn as movement' >&2
++if ! grep -F 'FRESH_STATE_FINALIZATION_PROGRESS_RACE' "$fresh_guard_tmp/race-semantic-churn-stop.json" >/dev/null; then
++  echo 'RED: Stop finalization accepted a progress-file rewrite after receipt creation' >&2
+   cat "$fresh_guard_tmp/race-semantic-churn-stop.json" >&2
+   exit 1
+ fi
+@@ -237,6 +257,23 @@
+ 
+ printf '%s\n' '{"completed":2,"remaining":8}' > "$progress_path"
+ 
++make_receipt race-safe "$receipt_root/race-volatile-only.json"
++printf '%s\n' '{"status":"PASS","updated_at":"volatile-race"}' > "$state_path"
++run_stop "$receipt_root/race-volatile-only.json" "$fresh_guard_tmp/race-volatile-only-stop.json"
++grep -F '"continue": true' "$fresh_guard_tmp/race-volatile-only-stop.json" >/dev/null
++/usr/bin/python3 - "$receipt_root/race-volatile-only.stop-finalized.json" <<'PY'
++import json
++import sys
++
++sys.path.insert(0, "/Users/NEWMAC/.codex/hooks")
++from fresh_state_cycle_evidence import sealed_payload_sha256
++
++with open(sys.argv[1], encoding="utf-8") as handle:
++    finalized = json.load(handle)
++seal = finalized["stop_finalization_seal"]
++assert seal["sealed_payload_sha256"] == sealed_payload_sha256(finalized)
++PY
++
+ make_receipt forged-before "$receipt_root/forged-before.json"
+ run_stop "$receipt_root/forged-before.json" "$fresh_guard_tmp/forged-before-stop.json"
+ grep -F 'FRESH_STATE_MOVEMENT_INVALID' "$fresh_guard_tmp/forged-before-stop.json" >/dev/null
+@@ -261,34 +298,14 @@
+ make_receipt race-safe "$receipt_root/race-safe.json"
+ printf '%s\n' '{"completed":3,"remaining":7}' > "$progress_path"
+ run_stop "$receipt_root/race-safe.json" "$fresh_guard_tmp/race-safe-stop.json"
+-if ! grep -F '"continue": true' "$fresh_guard_tmp/race-safe-stop.json" >/dev/null; then
+-  echo 'RED: canonical mutation between receipt write and Stop validation was rejected' >&2
++if ! grep -F 'FRESH_STATE_FINALIZATION_PROGRESS_RACE' "$fresh_guard_tmp/race-safe-stop.json" >/dev/null; then
++  echo 'RED: Stop finalization absorbed concurrent semantic progress' >&2
+   cat "$fresh_guard_tmp/race-safe-stop.json" >&2
+   exit 1
+ fi
+-finalized_receipt="$receipt_root/race-safe.stop-finalized.json"
+-RACE_SOURCE_SHA="$(/usr/bin/openssl dgst -sha256 -r "$receipt_root/race-safe.json" | awk '{print $1}')"
+-RACE_PROGRESS_SHA="$(/usr/bin/openssl dgst -sha256 -r "$progress_path" | awk '{print $1}')"
+-export RACE_SOURCE_SHA RACE_PROGRESS_SHA
+-/usr/bin/python3 - "$finalized_receipt" "$progress_path" <<'PY'
+-import json
+-import os
+-import sys
+ 
+-finalized_path, progress_path = sys.argv[1:]
+-with open(finalized_path, encoding="utf-8") as handle:
+-    finalized = json.load(handle)
+-seal = finalized["stop_finalization_seal"]
+-assert seal["protocol"] == "canonical_snapshot_v1"
+-assert seal["source_receipt_sha256"] == os.environ["RACE_SOURCE_SHA"]
+-rows = {row["path"]: row for row in finalized["state_readback"]}
+-assert rows[progress_path]["sha256"] == os.environ["RACE_PROGRESS_SHA"]
+-assert finalized["duplicate_claims"] == 0
+-assert finalized["protected_state_preserved"] is True
+-PY
+-
+-make_receipt race-safe-forged-before "$receipt_root/race-safe-forged-before.json"
+ printf '%s\n' '{"completed":4,"remaining":6}' > "$progress_path"
++make_receipt race-safe-forged-before "$receipt_root/race-safe-forged-before.json"
+ run_stop "$receipt_root/race-safe-forged-before.json" "$fresh_guard_tmp/race-safe-forged-before-stop.json"
+ grep -F 'FRESH_STATE_MOVEMENT_INVALID' "$fresh_guard_tmp/race-safe-forged-before-stop.json" >/dev/null
+ 
+@@ -300,8 +317,8 @@
+ run_stop "$receipt_root/race-safe-invalid-schema.json" "$fresh_guard_tmp/race-safe-invalid-schema-stop.json"
+ grep -F 'FRESH_STATE_RECEIPT_INVALID' "$fresh_guard_tmp/race-safe-invalid-schema-stop.json" >/dev/null
+ 
+-make_receipt race-safe-duplicate "$receipt_root/race-safe-duplicate.json"
+ printf '%s\n' '{"completed":5,"remaining":5}' > "$progress_path"
++make_receipt race-safe-duplicate "$receipt_root/race-safe-duplicate.json"
+ run_stop "$receipt_root/race-safe-duplicate.json" "$fresh_guard_tmp/race-safe-duplicate-stop.json"
+ grep -F '"continue": true' "$fresh_guard_tmp/race-safe-duplicate-stop.json" >/dev/null
+ /usr/bin/python3 - "$receipt_root/race-safe-duplicate.stop-finalized.json" <<'PY'
+@@ -318,4 +335,4 @@
+ run_stop "$receipt_root/pass.json" "$fresh_guard_tmp/pass-stop.json"
+ grep -F '"continue": true' "$fresh_guard_tmp/pass-stop.json" >/dev/null
+ 
+-echo 'fresh-state guard: 22 scenarios passed'
++echo 'fresh-state guard: 23 scenarios passed'
+--- a/installed/noin/tools/force_context_handoff_hook.py
++++ b/installed/noin/tools/force_context_handoff_hook.py
+@@ -15,11 +15,28 @@
+ 
+ from __future__ import annotations
+ 
++import hashlib
+ import json
++import os
+ import sys
++import tempfile
++import time
+ from pathlib import Path
++from typing import Final
+ 
+-MIN_COMPACTIONS = 2
++MIN_COMPACTIONS: Final = 2
++DEFAULT_STATE_ROOT: Final = Path("/Users/NEWMAC/.codex/hooks/runtime/context_handoff")
++ALLOWED_HANDOFF_TOOLS: Final = frozenset(
++    {
++        "mcp__codex_app__create_thread",
++        "mcp__codex_app__list_projects",
++        "mcp__codex_app__list_threads",
++        "mcp__codex_app__read_thread",
++        "mcp__codex_app__wait_threads",
++        "mcp__codex_app__send_message_to_thread",
++        "mcp__codex_app__set_thread_title",
++    }
++)
+ 
+ 
+ def count_compactions(transcript_path: Path) -> int | None:
+@@ -52,6 +69,87 @@
+ </bounded_handoff_mandate>"""
+ 
+ 
++def state_root() -> Path:
++    return Path(os.environ.get("CODEX_HANDOFF_STATE_ROOT", str(DEFAULT_STATE_ROOT)))
++
++
++def state_path(session_id: str) -> Path:
++    digest = hashlib.sha256(session_id.encode()).hexdigest()
++    return state_root() / f"{digest}.json"
++
++
++def persist_mandate(event: dict[str, object], compaction_count: int) -> None:
++    session_id = event.get("session_id")
++    transcript_path = event.get("transcript_path")
++    if not isinstance(session_id, str) or not session_id:
++        return
++    root = state_root()
++    try:
++        root.mkdir(parents=True, exist_ok=True)
++        payload = {
++            "schema_version": "bounded_handoff_mandate.v1",
++            "session_id": session_id,
++            "transcript_path": (
++                transcript_path if isinstance(transcript_path, str) else None
++            ),
++            "compaction_count": compaction_count,
++            "status": "HANDOFF_REQUIRED",
++            "activated_at_epoch": time.time(),
++        }
++        with tempfile.NamedTemporaryFile(
++            "w", encoding="utf-8", dir=root, delete=False
++        ) as handle:
++            json.dump(payload, handle, ensure_ascii=False, sort_keys=True)
++            handle.write("\n")
++            handle.flush()
++            os.fsync(handle.fileno())
++            temporary = Path(handle.name)
++        os.replace(temporary, state_path(session_id))
++    except OSError:
++        return
++
++
++def mandate_is_active(event: dict[str, object]) -> bool:
++    session_id = event.get("session_id")
++    if not isinstance(session_id, str) or not session_id:
++        return False
++    path = state_path(session_id)
++    if path.exists():
++        try:
++            raw = json.loads(path.read_text(encoding="utf-8"))
++        except (OSError, UnicodeError, json.JSONDecodeError):
++            return True
++        if (
++            isinstance(raw, dict)
++            and raw.get("session_id") == session_id
++            and raw.get("status") == "HANDOFF_REQUIRED"
++        ):
++            return True
++        return True
++    transcript_path = event.get("transcript_path")
++    if not isinstance(transcript_path, str) or not transcript_path:
++        return False
++    compaction_count = count_compactions(Path(transcript_path))
++    if compaction_count is None or compaction_count < MIN_COMPACTIONS:
++        return False
++    persist_mandate(event, compaction_count)
++    return True
++
++
++def emit_tool_denial() -> None:
++    payload = {
++        "hookSpecificOutput": {
++            "hookEventName": "PreToolUse",
++            "permissionDecision": "deny",
++            "permissionDecisionReason": (
++                "Repeated compaction requires a verified "
++                "PRIMARY_INTERACTIVE_HANDOFF_TASK before substantive tools can run."
++            ),
++        }
++    }
++    sys.stdout.write(json.dumps(payload, ensure_ascii=False) + "\n")
++
++
+ def main() -> int:
+     try:
+         event = json.load(sys.stdin)
+@@ -60,8 +158,17 @@
+ 
+     if not isinstance(event, dict):
+         return 0
+-    if event.get("hook_event_name") != "SessionStart":
++    event_name = event.get("hook_event_name")
++    if event_name == "PreToolUse":
++        if not mandate_is_active(event):
++            return 0
++        tool_name = event.get("tool_name")
++        if isinstance(tool_name, str) and tool_name in ALLOWED_HANDOFF_TOOLS:
++            return 0
++        emit_tool_denial()
+         return 0
++    if event_name != "SessionStart":
++        return 0
+     if event.get("source") != "compact":
+         return 0
+ 
+@@ -73,6 +180,7 @@
+     if compaction_count is None or compaction_count < MIN_COMPACTIONS:
+         return 0
+ 
++    persist_mandate(event, compaction_count)
+     payload = {
+         "hookSpecificOutput": {
+             "hookEventName": "SessionStart",
+--- a/installed/noin/tools/test_force_context_handoff_hook.py
++++ b/installed/noin/tools/test_force_context_handoff_hook.py
+@@ -16,6 +16,7 @@
+ from __future__ import annotations
+ 
+ import json
++import os
+ import subprocess
+ import sys
+ import tempfile
+@@ -37,16 +38,26 @@
+ EXPECTED_TRUSTED_HASH = (
+     "sha256:3091e36c53095fd708655752bf41edbf1bae26de3b2bd47b6a433663b5bea0af"
+ )
++PRE_TOOL_STATE_KEY = "/Users/NEWMAC/.codex/hooks.json:pre_tool_use:0:0"
++EXPECTED_PRE_TOOL_TRUSTED_HASH = (
++    "sha256:7fabf89702d5532076fa1efeef79984ffa8948c9ae51fa07b5a1d20d84f1579d"
++)
+ 
+ 
+ class ForceContextHandoffHookTests(unittest.TestCase):
+-    def run_hook(self, event: dict[str, object]) -> subprocess.CompletedProcess[str]:
++    def run_hook(
++        self, event: dict[str, object], state_root: Path | None = None
++    ) -> subprocess.CompletedProcess[str]:
++        environment = os.environ.copy()
++        if state_root is not None:
++            environment["CODEX_HANDOFF_STATE_ROOT"] = str(state_root)
+         return subprocess.run(
+             [sys.executable, str(HOOK)],
+             input=json.dumps(event),
+             text=True,
+             capture_output=True,
+             check=False,
++            env=environment,
+         )
+ 
+     def write_transcript(self, root: Path, compaction_count: int) -> Path:
+@@ -67,6 +78,19 @@
+             "transcript_path": str(transcript),
+         }
+ 
++    def pre_tool_event(
++        self, transcript: Path | None, tool_name: str = "Bash"
++    ) -> dict[str, object]:
++        return {
++            "hook_event_name": "PreToolUse",
++            "session_id": "bounded-handoff-test",
++            "turn_id": "turn-test",
++            "transcript_path": str(transcript) if transcript is not None else None,
++            "tool_name": tool_name,
++            "tool_use_id": "tool-test",
++            "tool_input": {"command": "printf test"},
++        }
++
+     def test_first_compaction_stays_in_current_task_without_advisory(self) -> None:
+         with tempfile.TemporaryDirectory() as temporary:
+             transcript = self.write_transcript(Path(temporary), 1)
+@@ -77,8 +101,9 @@
+ 
+     def test_second_compaction_mandates_bounded_handoff(self) -> None:
+         with tempfile.TemporaryDirectory() as temporary:
+-            transcript = self.write_transcript(Path(temporary), 2)
+-            completed = self.run_hook(self.compact_event(transcript))
++            root = Path(temporary)
++            transcript = self.write_transcript(root, 2)
++            completed = self.run_hook(self.compact_event(transcript), root / "state")
+ 
+         self.assertEqual(completed.returncode, 0, completed.stderr)
+         payload = json.loads(completed.stdout)
+@@ -95,8 +120,80 @@
+             },
+         )
+ 
+-    def test_stop_and_noncompact_events_never_emit_or_block(self) -> None:
++    def test_second_compaction_blocks_substantive_tools(self) -> None:
+         with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            transcript = self.write_transcript(root, 2)
++            state_root = root / "state"
++            self.run_hook(self.compact_event(transcript), state_root)
++
++            completed = self.run_hook(
++                self.pre_tool_event(transcript),
++                state_root,
++            )
++
++        self.assertEqual(completed.returncode, 0, completed.stderr)
++        payload = json.loads(completed.stdout)
++        output = payload["hookSpecificOutput"]
++        self.assertEqual(output["hookEventName"], "PreToolUse")
++        self.assertEqual(output["permissionDecision"], "deny")
++        self.assertIn("PRIMARY_INTERACTIVE_HANDOFF_TASK", output["permissionDecisionReason"])
++
++    def test_handoff_coordination_tools_remain_available(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            transcript = self.write_transcript(root, 2)
++            state_root = root / "state"
++            self.run_hook(self.compact_event(transcript), state_root)
++
++            completed = self.run_hook(
++                self.pre_tool_event(transcript, "mcp__codex_app__create_thread"),
++                state_root,
++            )
++
++        self.assertEqual(completed.returncode, 0, completed.stderr)
++        self.assertEqual(completed.stdout, "")
++
++    def test_durable_mandate_blocks_when_transcript_is_unavailable(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            transcript = self.write_transcript(root, 2)
++            state_root = root / "state"
++            self.run_hook(self.compact_event(transcript), state_root)
++
++            completed = self.run_hook(
++                self.pre_tool_event(None),
++                state_root,
++            )
++
++        payload = json.loads(completed.stdout)
++        self.assertEqual(
++            payload["hookSpecificOutput"]["permissionDecision"],
++            "deny",
++        )
++
++    def test_tampered_durable_mandate_still_blocks_without_transcript(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            transcript = self.write_transcript(root, 2)
++            state_root = root / "state"
++            self.run_hook(self.compact_event(transcript), state_root)
++            state_file = next(state_root.glob("*.json"))
++            state_file.write_text('{"status":"CLEARED"}\n', encoding="utf-8")
++
++            completed = self.run_hook(
++                self.pre_tool_event(None),
++                state_root,
++            )
++
++        payload = json.loads(completed.stdout)
++        self.assertEqual(
++            payload["hookSpecificOutput"]["permissionDecision"],
++            "deny",
++        )
++
++    def test_stop_and_noncompact_session_events_never_emit_or_block(self) -> None:
++        with tempfile.TemporaryDirectory() as temporary:
+             transcript = self.write_transcript(Path(temporary), 2)
+             events = [
+                 {"hook_event_name": "Stop", "session_id": "bounded-handoff-test"},
+@@ -128,10 +225,13 @@
+                 self.assertEqual(completed.returncode, 0, completed.stderr)
+                 self.assertEqual(completed.stdout, "")
+ 
+-    def test_current_hooks_config_registers_only_bounded_session_start(self) -> None:
++    def test_current_hooks_config_registers_bounded_handoff_enforcement(self) -> None:
+         config = json.loads(HOOKS_CONFIG.read_text(encoding="utf-8"))
+         hooks = config["hooks"]
+-        self.assertEqual(set(hooks), {"SessionStart", "UserPromptSubmit", "Stop"})
++        self.assertEqual(
++            set(hooks),
++            {"SessionStart", "PreToolUse", "UserPromptSubmit", "Stop"},
++        )
+         session_start = hooks["SessionStart"]
+         self.assertEqual(len(session_start), 1)
+         self.assertEqual(session_start[0]["matcher"], "^compact$")
+@@ -140,6 +240,10 @@
+         self.assertEqual(handlers[0]["command"], HOOK_COMMAND)
+         self.assertEqual(handlers[0]["statusMessage"], "Assessing context continuity")
+         self.assertNotIn("PostToolUse", hooks)
++        pre_tool = hooks["PreToolUse"]
++        self.assertEqual(len(pre_tool), 1)
++        self.assertEqual(pre_tool[0]["matcher"], ".*")
++        self.assertEqual(pre_tool[0]["hooks"][0]["command"], HOOK_COMMAND)
+         stop_commands = [handler["command"] for group in hooks["Stop"] for handler in group["hooks"]]
+         self.assertNotIn(HOOK_COMMAND, stop_commands)
+ 
+@@ -148,6 +252,8 @@
+             config = tomllib.load(handle)
+         trusted_hash = config["hooks"]["state"][HOOK_STATE_KEY]["trusted_hash"]
+         self.assertEqual(trusted_hash, EXPECTED_TRUSTED_HASH)
++        pre_tool_hash = config["hooks"]["state"][PRE_TOOL_STATE_KEY]["trusted_hash"]
++        self.assertEqual(pre_tool_hash, EXPECTED_PRE_TOOL_TRUSTED_HASH)
+ 
+     def test_core_developer_contract_uses_mandatory_bounded_handoff_policy(self) -> None:
+         with CODEX_CONFIG.open("rb") as handle:
+--- a/installed/.codex/hooks.json
++++ b/installed/.codex/hooks.json
+@@ -15,6 +15,19 @@
+         ]
+       }
+     ],
++    "PreToolUse": [
++      {
++        "matcher": ".*",
++        "hooks": [
++          {
++            "type": "command",
++            "command": "/Users/NEWMAC/.local/bin/uv run --script /Users/NEWMAC/Documents/noin/tools/force_context_handoff_hook.py",
++            "timeout": 10,
++            "statusMessage": "Enforcing context handoff boundary"
++          }
++        ]
++      }
++    ],
+     "UserPromptSubmit": [
+       {
+         "hooks": [
+--- a/installed/.codex/config.toml
++++ b/installed/.codex/config.toml
+@@ -546,6 +546,9 @@
+ [hooks.state."/Users/NEWMAC/.codex/hooks.json:session_start:0:0"]
+ trusted_hash = "sha256:3091e36c53095fd708655752bf41edbf1bae26de3b2bd47b6a433663b5bea0af"
+ 
++[hooks.state."/Users/NEWMAC/.codex/hooks.json:pre_tool_use:0:0"]
++trusted_hash = "sha256:7fabf89702d5532076fa1efeef79984ffa8948c9ae51fa07b5a1d20d84f1579d"
++
+ [hooks.state."/Users/NEWMAC/.codex/hooks.json:stop:0:0"]
+ trusted_hash = "sha256:c5fe1b5e29afb568435667372699a4cade934cab47e063cd1b5faf1b499f764c"
+ 
+--- a/installed/webtoon/bookto_multitab_targets.py
++++ b/installed/webtoon/bookto_multitab_targets.py
+@@ -2,6 +2,7 @@
+ 
+ from __future__ import annotations
+ 
++import os
+ from pathlib import Path
+ from typing import Any
+ 
+@@ -25,6 +26,7 @@
+             "target_id": target["id"],
+             "cdp_port": config["cdp_port"],
+             "item_key": item_key,
++            "worker_pid": os.getpid(),
+             "created_at": now_iso(),
+         },
+     )
+--- a/installed/webtoon/test_bookto_multitab_cdp.py
++++ b/installed/webtoon/test_bookto_multitab_cdp.py
+@@ -2,20 +2,19 @@
+ 
+ import base64
+ import json
++import os
+ from pathlib import Path
+ 
+-import pytest
+-import websocket
+-
+ import bookto_multitab_catalog as catalog_contract
+ import bookto_multitab_cdp as cdp
+ import bookto_multitab_cdp_core as cdp_core
+ import bookto_multitab_targets as target_registry
++import pytest
++import websocket
+ from bookto_multitab_catalog import BOARD_SPECS, board_url, parse_detail, parse_list
+ from bookto_multitab_cdp_core import (
+     CdpError,
+     CdpPage,
+-    CloudflareChallenge,
+     ImageRouteUnavailable,
+     RetryableCloudflareChallenge,
+     load_resource_with_retries,
+@@ -551,3 +550,15 @@
+     assert closed == [(9240, "target-owned")]
+     assert not marker.exists()
+     assert (marker_dir / "unreceipted.txt").exists()
++
++
++def test_background_target_marker_binds_to_scraper_worker_pid(tmp_path: Path) -> None:
++    marker = target_registry.register_background_target(
++        {"state_path": str(tmp_path / "SCRAPE_STATE.json"), "cdp_port": 9240},
++        {"id": "target-owned"},
++        "newto_fafa:1",
++    )
++
++    receipt = json.loads(marker.read_text(encoding="utf-8"))
++
++    assert receipt["worker_pid"] == os.getpid()
