@@ -11,6 +11,10 @@ Start with:
 3. [`metadata/SOURCE_HASHES.tsv`](metadata/SOURCE_HASHES.tsv)
 4. `snapshots/automation`, `snapshots/hooks`, `snapshots/process`, `snapshots/scraper`, `snapshots/state`, and `snapshots/receipts`
 
+## Verified implementation follow-up
+
+The sanitized implementation patch, verification evidence, provenance hashes, and a commit-pinned WebGPT audit prompt are in [`prompts/bookto-stop-enforcement-20260905`](prompts/bookto-stop-enforcement-20260905/00_WEBGPT_MASTER_PROMPT.md).
+
 ## Sanitization and scope
 
 - Local usernames are replaced with `/Users/NEWMAC` and `/Users/OLDMAC`.

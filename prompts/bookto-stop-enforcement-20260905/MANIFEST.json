@@ -1,0 +1,53 @@
+{
+  "packet_id": "bookto-stop-enforcement-20260905",
+  "repository": "Kyuha927/noin-bookto-hourly-repair-debug-bundle",
+  "branch": "main",
+  "publication_commit": "61f05e4b79d91d2e780c3552f3b7ea07997a3e8f",
+  "visibility": "PUBLIC",
+  "master_prompt": {
+    "path": "prompts/bookto-stop-enforcement-20260905/00_WEBGPT_MASTER_PROMPT.md",
+    "role": "master_prompt",
+    "bytes": 6002,
+    "sha256": "44663c6eed50e17b049fde53c5008ddf07240af965405da7a6ed1d6def231526",
+    "link_record": "published_with_manifest; immutable commit and URLs are verified externally to avoid a commit self-reference"
+  },
+  "files": [
+    {
+      "path": "prompts/bookto-stop-enforcement-20260905/01_IMPLEMENTATION_CONTEXT.md",
+      "role": "incident_context",
+      "bytes": 4803,
+      "sha256": "48f683235ade1262046a5a6fa2075e695ace5d96cd8e63995a63e4134304e24d",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/01_IMPLEMENTATION_CONTEXT.md",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/01_IMPLEMENTATION_CONTEXT.md",
+      "public_disclosure_review": "PASS"
+    },
+    {
+      "path": "prompts/bookto-stop-enforcement-20260905/02_EXACT_PATCH.diff",
+      "role": "exact_patch",
+      "bytes": 47859,
+      "sha256": "6109eae2592905015991525235e9bbd447c35895f254718ef4c7db3c60ff6f2e",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/02_EXACT_PATCH.diff",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/02_EXACT_PATCH.diff",
+      "public_disclosure_review": "PASS"
+    },
+    {
+      "path": "prompts/bookto-stop-enforcement-20260905/03_TEST_EVIDENCE.md",
+      "role": "verification_evidence",
+      "bytes": 2144,
+      "sha256": "91473d0c30a925497defe93fa64bc40d03c384f412938bceedafa9a3ca896ea1",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/03_TEST_EVIDENCE.md",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/03_TEST_EVIDENCE.md",
+      "public_disclosure_review": "PASS"
+    },
+    {
+      "path": "prompts/bookto-stop-enforcement-20260905/04_SOURCE_HASHES.tsv",
+      "role": "source_provenance",
+      "bytes": 1661,
+      "sha256": "6745cdeccb9fb4961e33a49db0bb8b297d0cfb565ea916c05d07f94f5cbe91bb",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/04_SOURCE_HASHES.tsv",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/61f05e4b79d91d2e780c3552f3b7ea07997a3e8f/prompts/bookto-stop-enforcement-20260905/04_SOURCE_HASHES.tsv",
+      "public_disclosure_review": "PASS"
+    }
+  ],
+  "manifest_self_record": "omitted_to_avoid_recursive_self_hash"
+}
