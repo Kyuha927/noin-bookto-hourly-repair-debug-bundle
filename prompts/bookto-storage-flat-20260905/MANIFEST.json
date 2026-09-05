@@ -1,0 +1,37 @@
+{
+  "packet_id": "bookto-storage-flat-20260905",
+  "repository": "Kyuha927/noin-bookto-hourly-repair-debug-bundle",
+  "branch": "prompts/bookto-storage-flat-20260905",
+  "publication_commit": "cbe03cef42047f807fdff9af311bc57d1c6226cd",
+  "visibility": "PUBLIC",
+  "prepared_only": true,
+  "webgpt_submission_status": "NOT_SUBMITTED",
+  "master_prompt": {
+    "path": "prompts/bookto-storage-flat-20260905/00_WEBGPT_MASTER_PROMPT.md",
+    "role": "master_prompt",
+    "bytes": 6005,
+    "sha256": "7d2d1fad4b287b6a1c6c743a2f868ebd2f013d10bd51c387ae5670d8c82bb185",
+    "link_record": "published with this manifest; immutable commit and URLs are verified externally to avoid a commit self-reference"
+  },
+  "files": [
+    {
+      "path": "prompts/bookto-storage-flat-20260905/01_INCIDENT_CONTEXT.md",
+      "role": "incident_context",
+      "bytes": 5441,
+      "sha256": "4e1b45169128a87b64b0c409e98d71425710b12d78e64b83c86d1d4297e4a5ce",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/cbe03cef42047f807fdff9af311bc57d1c6226cd/prompts/bookto-storage-flat-20260905/01_INCIDENT_CONTEXT.md",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/cbe03cef42047f807fdff9af311bc57d1c6226cd/prompts/bookto-storage-flat-20260905/01_INCIDENT_CONTEXT.md",
+      "public_disclosure_review": "PASS"
+    },
+    {
+      "path": "prompts/bookto-storage-flat-20260905/02_OFFICIAL_SOURCES.md",
+      "role": "official_sources",
+      "bytes": 1487,
+      "sha256": "2a2b205f4b0d91e47defece1b8d7b6704a288644711c3e932c93955d52afb258",
+      "blob_url": "https://github.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/blob/cbe03cef42047f807fdff9af311bc57d1c6226cd/prompts/bookto-storage-flat-20260905/02_OFFICIAL_SOURCES.md",
+      "raw_url": "https://raw.githubusercontent.com/Kyuha927/noin-bookto-hourly-repair-debug-bundle/cbe03cef42047f807fdff9af311bc57d1c6226cd/prompts/bookto-storage-flat-20260905/02_OFFICIAL_SOURCES.md",
+      "public_disclosure_review": "PASS"
+    }
+  ],
+  "manifest_self_record": "omitted_to_avoid_recursive_self_hash"
+}
