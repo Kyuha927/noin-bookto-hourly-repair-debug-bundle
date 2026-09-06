@@ -1,0 +1,39 @@
+name: Anonymous public handoff verification 20260907
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/verify-public-handoff-20260907.yml]
+permissions: {}
+jobs:
+  anonymous-readback:
+    if: github.repository == 'Kyuha927/noin-bookto-hourly-repair-debug-bundle'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Verify public raw bytes and blob page without credentials
+        shell: bash
+        run: |
+          set -euo pipefail
+          # No checkout, external actions, secrets, login, cookies, or auth headers.
+          # -q disables curl config; no --netrc, --cookie, --user, or Authorization.
+          root='Kyuha927/noin-bookto-hourly-repair-debug-bundle'
+          sha='d2e37e0b0e079418af14a3b4d86bda11d796cbf5'
+          path='prompts/recipient-readable-handoffs/LANE_B_CURRENT_PRODUCTION_PUBLIC_ENTRY_20260907.md'
+          expected_blob='55258482e1701daceae248e0fd9e1255367f03ab'
+          raw="https://raw.githubusercontent.com/$root/$sha/$path"
+          blob="https://github.com/$root/blob/$sha/$path"
+          tmp="$(mktemp -d)"
+          trap 'rm -rf "$tmp"' EXIT
+          raw_status="$(curl -q --fail --silent --show-error --location --proto '=https' --max-time 45 -o "$tmp/body.md" -w '%{http_code}' "$raw")"
+          test "$raw_status" = 200
+          actual_blob="$(git hash-object --stdin < "$tmp/body.md")"
+          test "$actual_blob" = "$expected_blob"
+          grep -Fq 'REVISION=20260907_PUBLIC_OPERATIONAL_ENTRY_R2' "$tmp/body.md"
+          blob_status="$(curl -q --fail --silent --show-error --location --proto '=https' --max-time 45 -o "$tmp/blob.html" -w '%{http_code}' "$blob")"
+          test "$blob_status" = 200
+          grep -Fq 'REVISION=20260907_PUBLIC_OPERATIONAL_ENTRY_R2' "$tmp/blob.html"
+          printf 'PASS_ANONYMOUS_EXACT_BODY_READBACK\nRAW_HTTP=%s\nBLOB_HTTP=%s\nGIT_BLOB_SHA1=%s\n' "$raw_status" "$blob_status" "$actual_blob"
+          date -u +CHECKED_AT_UTC=%Y-%m-%dT%H:%M:%SZ
+          sha256sum "$tmp/body.md"
+          wc -c "$tmp/body.md"
+          printf 'COMMIT=%s\nPATH=%s\nAUTH_HEADERS=false\nCOOKIES=false\nPRODUCT_EXECUTION=false\n' "$sha" "$path"
