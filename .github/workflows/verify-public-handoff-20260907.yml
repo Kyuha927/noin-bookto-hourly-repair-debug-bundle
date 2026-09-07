@@ -17,9 +17,9 @@ jobs:
           # No checkout, external actions, secrets, login, cookies, or auth headers.
           # -q disables curl config; no --netrc, --cookie, --user, or Authorization.
           root='Kyuha927/noin-bookto-hourly-repair-debug-bundle'
-          sha='d2e37e0b0e079418af14a3b4d86bda11d796cbf5'
-          path='prompts/recipient-readable-handoffs/LANE_B_CURRENT_PRODUCTION_PUBLIC_ENTRY_20260907.md'
-          expected_blob='55258482e1701daceae248e0fd9e1255367f03ab'
+          sha='fe20ab1ff1a845b14e382771e63bc4b47d4c066f'
+          path='prompts/recipient-readable-handoffs/LANE_B_MUSE_GIT_CONTINUE.md'
+          expected_blob='ced5ad0c250c02a4cfd3473cbb6c78bb12f9dd34'
           raw="https://raw.githubusercontent.com/$root/$sha/$path"
           blob="https://github.com/$root/blob/$sha/$path"
           tmp="$(mktemp -d)"
@@ -28,10 +28,10 @@ jobs:
           test "$raw_status" = 200
           actual_blob="$(git hash-object --stdin < "$tmp/body.md")"
           test "$actual_blob" = "$expected_blob"
-          grep -Fq 'REVISION=20260907_PUBLIC_OPERATIONAL_ENTRY_R2' "$tmp/body.md"
+          grep -Fq 'REVISION=20260907_MUSE_GIT_CONTINUE_R1' "$tmp/body.md"
           blob_status="$(curl -q --fail --silent --show-error --location --proto '=https' --max-time 45 -o "$tmp/blob.html" -w '%{http_code}' "$blob")"
           test "$blob_status" = 200
-          grep -Fq 'REVISION=20260907_PUBLIC_OPERATIONAL_ENTRY_R2' "$tmp/blob.html"
+          grep -Fq 'REVISION=20260907_MUSE_GIT_CONTINUE_R1' "$tmp/blob.html"
           printf 'PASS_ANONYMOUS_EXACT_BODY_READBACK\nRAW_HTTP=%s\nBLOB_HTTP=%s\nGIT_BLOB_SHA1=%s\n' "$raw_status" "$blob_status" "$actual_blob"
           date -u +CHECKED_AT_UTC=%Y-%m-%dT%H:%M:%SZ
           sha256sum "$tmp/body.md"
