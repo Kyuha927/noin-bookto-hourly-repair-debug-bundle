@@ -1,0 +1,36 @@
+name: Verify autonomy entry anonymous readback
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/verify-autonomy-entry-20260907.yml]
+permissions: {}
+jobs:
+  anonymous-readback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Check public bytes without login or credentials
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib, json, urllib.request, urllib.parse
+          repo='Kyuha927/noin-bookto-hourly-repair-debug-bundle'
+          sha='64f7c4315531bfbc838d32bf1fe5a0368f6beb33'
+          path='prompts/recipient-readable-handoffs/LASTLINE_GATE_DRIVEN_AUTONOMY_REPAIR_20260907.md'
+          opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+          def read(url,host,limit):
+              req=urllib.request.Request(url,headers={'User-Agent':'anonymous-handoff-verifier/1.0'})
+              assert not req.has_header('Authorization') and not req.has_header('Cookie')
+              with opener.open(req,timeout=35) as response:
+                  assert response.status==200 and urllib.parse.urlparse(response.geturl()).hostname==host
+                  assert '/login' not in urllib.parse.urlparse(response.geturl()).path
+                  body=response.read(limit+1); assert len(body)<=limit
+                  return body
+          raw=read(f'https://raw.githubusercontent.com/{repo}/{sha}/{path}','raw.githubusercontent.com',262144)
+          blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
+          assert blob=='1332f50a3852a4c14b45b29c95a0101b8601c7db'
+          assert b'TASK=LASTLINE_GATE_DRIVEN_AUTONOMY_REPAIR_20260907' in raw
+          html=read(f'https://github.com/{repo}/blob/{sha}/{path}','github.com',3000000)
+          assert b'REQUEST_STATE=REQUESTED_NOT_LOCALLY_ACKNOWLEDGED' in html
+          print(json.dumps({'status':'PASS_ANONYMOUS_EXACT_BODY','commit':sha,'path':path,'raw_http':200,'blob_http':200,'git_blob':blob,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'authorization_headers':False,'cookies':False,'private_project_access_proven':False,'local_runtime_started':False},indent=2))
+          PY
