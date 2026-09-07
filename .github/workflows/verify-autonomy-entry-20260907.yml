@@ -6,6 +6,7 @@ on:
 permissions: {}
 jobs:
   anonymous-readback:
+    if: github.repository == 'Kyuha927/noin-bookto-hourly-repair-debug-bundle'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     steps:
@@ -13,10 +14,12 @@ jobs:
         shell: bash
         run: |
           python3 - <<'PY'
-          import hashlib, json, urllib.request, urllib.parse
+          import datetime, hashlib, json, urllib.request, urllib.parse
           repo='Kyuha927/noin-bookto-hourly-repair-debug-bundle'
-          sha='64f7c4315531bfbc838d32bf1fe5a0368f6beb33'
+          sha='e29201ed3986bfad39931297a9b5aae0996ad057'
           path='prompts/recipient-readable-handoffs/LASTLINE_GATE_DRIVEN_AUTONOMY_REPAIR_20260907.md'
+          expected_blob='81cdcba891e1158afe44285ff44d560bff4fa74a'
+          # No checkout, external action, token, cookies, credential helper or user data.
           opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
           def read(url,host,limit):
               req=urllib.request.Request(url,headers={'User-Agent':'anonymous-handoff-verifier/1.0'})
@@ -28,9 +31,19 @@ jobs:
                   return body
           raw=read(f'https://raw.githubusercontent.com/{repo}/{sha}/{path}','raw.githubusercontent.com',262144)
           blob=hashlib.sha1(b'blob '+str(len(raw)).encode()+b'\0'+raw).hexdigest()
-          assert blob=='1332f50a3852a4c14b45b29c95a0101b8601c7db'
-          assert b'TASK=LASTLINE_GATE_DRIVEN_AUTONOMY_REPAIR_20260907' in raw
+          assert blob==expected_blob
+          text=raw.decode('utf-8')
+          assert text.startswith('# LASTLINE · Local Work: repair the active loop, create a real outcome, continue\n')
+          assert 'REVISION=R2_OUTCOME_FIRST_LOCAL_EXECUTION' in text
+          assert 'PARENT_PRODUCTION_TASK=LL-LANE-B-MOTION-INTEGRATION-20260907' in text
+          assert text.endswith('not a larger stack of instructions.\n')
+          for section in range(10):
+              assert f'## {section}. ' in text
+          for required in ['Muse Spark','Codex designs and independently verifies','COVERAGE_ONLY','NO_RETURN','INTENT/PRESENCE/EVIDENCE','INHERITED_REFERENCE','광산 → 공방','reset','STOP','PRIVATE']:
+              assert required in text, required
+          assert '/Users/macpro/' not in text and 'drive.google.com/' not in text
           html=read(f'https://github.com/{repo}/blob/{sha}/{path}','github.com',3000000)
+          assert b'REVISION=R2_OUTCOME_FIRST_LOCAL_EXECUTION' in html
           assert b'REQUEST_STATE=REQUESTED_NOT_LOCALLY_ACKNOWLEDGED' in html
-          print(json.dumps({'status':'PASS_ANONYMOUS_EXACT_BODY','commit':sha,'path':path,'raw_http':200,'blob_http':200,'git_blob':blob,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'authorization_headers':False,'cookies':False,'private_project_access_proven':False,'local_runtime_started':False},indent=2))
+          print(json.dumps({'status':'PASS_ANONYMOUS_EXACT_BODY','checked_at_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(),'commit':sha,'path':path,'raw_http':200,'blob_http':200,'git_blob':blob,'sha256':hashlib.sha256(raw).hexdigest(),'bytes':len(raw),'sections_present':10,'authorization_headers':False,'cookies':False,'private_project_access_proven':False,'recipient_has_read_it':False,'local_runtime_started':False,'semantic_or_product_validation_performed':False},indent=2))
           PY
