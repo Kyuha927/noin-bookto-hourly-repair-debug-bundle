@@ -1,0 +1,43 @@
+name: Verify public BBK local-finish entry
+on:
+  push:
+    branches: [delivery/bbk-local-finish-20260908]
+permissions: {}
+jobs:
+  anonymous-readback:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Verify exact anonymous raw and blob body
+        env:
+          EXPECTED_SHA256: 390803c3ace2435721a3c1aa3e51675d239a158ac397a8f4eed44135010376b7
+          EXPECTED_BYTES: '27323'
+          ENTRY: prompts/recipient-readable-handoffs/ONE_SHOT_BBK_LOCAL_FINISH.md
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import datetime, hashlib, json, os, time, urllib.request
+          repo, sha, path = os.environ['GITHUB_REPOSITORY'], os.environ['GITHUB_SHA'], os.environ['ENTRY']
+          opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
+          results = []
+          for kind, url in [('raw', f'https://raw.githubusercontent.com/{repo}/{sha}/{path}'), ('blob', f'https://github.com/{repo}/blob/{sha}/{path}')]:
+              for attempt in range(3):
+                  try:
+                      request = urllib.request.Request(url, headers={'User-Agent': 'BBK-public-entry-readback'})
+                      with opener.open(request, timeout=20) as response:
+                          status = response.status
+                          data = response.read(4 * 1024 * 1024 + 1)
+                      assert status == 200 and len(data) <= 4 * 1024 * 1024
+                      if kind == 'raw':
+                          assert len(data) == int(os.environ['EXPECTED_BYTES']), 'raw byte count mismatch'
+                          assert hashlib.sha256(data).hexdigest() == os.environ['EXPECTED_SHA256'], 'raw hash mismatch'
+                      else:
+                          assert b'FIRST_VISIBLE_3D' in data and b'ACTIVE_END_TO_END' in data, 'document body absent'
+                      results.append({'kind': kind, 'url': url, 'http': status, 'bytes': len(data), 'sha256': hashlib.sha256(data).hexdigest()})
+                      break
+                  except Exception:
+                      if attempt == 2:
+                          raise
+                      time.sleep(2 * (attempt + 1))
+          print('BBK_PUBLIC_READBACK=' + json.dumps({'status':'PASS', 'commit':sha, 'auth':'NONE', 'cookies':'NONE', 'reader':'github-hosted-ubuntu-python-urllib', 'time_utc':datetime.datetime.now(datetime.timezone.utc).isoformat(), 'results':results, 'scope':'public instruction access only; local installation and Blender execution NOT_RUN'}, sort_keys=True))
+          PY
