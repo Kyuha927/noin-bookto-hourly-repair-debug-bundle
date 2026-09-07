@@ -2,38 +2,86 @@
 
 **Recipient:** the existing authorized local Work/Codex session that is already continuing the BBK from-scratch 3D character project.
 
-Run this once in that existing local project session. Do not open a replacement coordinator, do not stop the current modeling work, and do not restart the already-running remote chats. This instruction changes the BBK project's model-routing policy from a likely Gemini-only implementation route to a verified task-aware hybrid route while preserving the existing control plane, single-writer lease, current session, model assets, and in-flight jobs.
+Run this once in that existing local project session. Do not open a replacement coordinator. Do not stop the current modeling work. Do not restart the already-running remote chats. Apply the routing change at the next safe task boundary, then continue the real Blender/modeling pipeline automatically.
 
-This is a public-safe operational successor. It contains no private asset, credential, local absolute path, API key, chat transcript, or hidden router state. Resolve the actual project root, authenticated private remote, active router files, session IDs, and provider access on the receiving host.
+This is a public-safe operational successor. It contains no private asset, credential, local absolute path, API key, chat transcript, or hidden router state. Resolve the actual project root, authenticated project remote, active router files, session IDs, provider access, and exact model slugs on the receiving host.
 
-## 0. User authorization and hard objective lock
+## 0. Current user authority and objective lock
 
-The user explicitly authorizes this BBK-scoped routing change:
+The user explicitly authorizes a **BBK-project-scoped** routing change:
 
-- Stop treating Gemini 3.7 Flash High as the only model allowed for every BBK worker.
-- Keep Gemini available where it is genuinely the best throughput choice.
-- Use GPT-6 Astra and other actually available Codex models for the tasks they fit better.
-- Allow different subagents or explicit CLI workers to use different models and reasoning levels.
-- Keep the existing local continuation and modeling work running; apply routing changes at a safe task boundary rather than interrupting an owned active job.
-- Do not change routing for unrelated projects.
+- Stop treating Gemini 3.7 Flash High as the only permissible model for every BBK worker.
+- Use each already authorized local model for the work it performs best.
+- Prefer Gemini 3.8 Flash for high-throughput agentic implementation, validation, and mechanical Blender work when its actual local route is available.
+- Use GPT-5.6 Sol High for difficult engineering, Blender state recovery, rigging/skinning, and cross-module debugging.
+- Use GPT-6 Astra High for M00 coordination, major integration decisions, visual reasoning, and reference-faithful modeling direction.
+- Use Astra xhigh only at discrete high-value visual/final-review boundaries, not continuously.
+- Allow different subagents or explicit CLI workers to use different models and reasoning efforts.
+- Keep current jobs alive and preserve their outputs. A worker already executing may finish on its original route; the new router governs subsequent tasks.
+- Keep unrelated projects on their existing routing policies.
+
+This current instruction supersedes the older **Gemini-only BBK implementation restriction** for this project. It does not globally revoke safeguards, the single-writer lease, provider authentication boundaries, quota controls, or user artistic approval.
 
 Lock these fields before mutation:
 
 ```text
 USER_GOAL = finish the actual editable BBK 3D character with the best practical modeling quality
-PRIMARY_DELIVERABLE = task-aware model routing actively used by the existing local continuation runner, followed by continued real Blender work
-DEFINITION_OF_DONE = verified route files + actual model/effort receipts + one real routed implementation/verification cycle + rollback path
-USER_VISIBLE_EVIDENCE = route matrix, actual runtime identities, canary outputs, and continued native/model artifact progress
+PRIMARY_DELIVERABLE = task-aware multi-model routing actively used by the existing local continuation runner, followed immediately by continued real Blender work
+DEFINITION_OF_DONE = verified route inventory + project-scoped router + actual model/effort receipts + one real routed BBK cycle + rollback proof
+USER_VISIBLE_EVIDENCE = actual routed task results, native/model artifacts, route receipts, and continued progress toward the first meaningful 3D candidate
 NON_GOALS = replacing Hermes, a second scheduler, a second coordinator, global provider churn, new API keys, paid API provisioning, or a report-only router
-ALLOWED_SUPPORTING_WORK = version/access checks, backups, project-scoped Codex agent profiles, deterministic routing code, focused canaries, narrow supervisor integration
+ALLOWED_SUPPORTING_WORK = version/access checks, backups, project-scoped profiles, deterministic routing code, focused canaries, and narrow supervisor integration
 HARD_BLOCKERS = managed policy that cannot be project-scoped, unavailable authenticated model route, unresolved active-writer ownership, or failed rollback integrity
 ```
 
-A configuration file alone is not completion. The setup must route at least one real current BBK task and preserve the current modeling process.
+A configuration file alone is not completion. The setup must route and complete at least one real current BBK task, then select the next eligible task without another user “continue”.
 
-## 1. Recover the actual current routing authority without guessing
+## 1. Verified model facts to use, and what they do not prove
 
-Begin inside the existing BBK project workspace. Read the applicable local `AGENTS.md`, project SSOT/continuity, active supervisor state, global write lease, current continuation-runner state, current Codex configuration, custom agents, profiles, and the active model-router decision file or successor.
+The following facts were checked against official primary sources on 2026-09-08:
+
+### Gemini 3.8 Flash
+
+Google lists Gemini 3.8 Flash as generally available and intended for agentic coding, software engineering, long-horizon workflows, advanced reasoning, multimodal understanding, and knowledge work. Its official model information lists a 1M-token input window, 64K output, function calling, search as a tool, computer use, and customizable effort levels. Google also publishes strong vendor-reported long-horizon software-engineering results.
+
+Use those facts as support for assigning it substantial implementation and automation work. Do **not** treat vendor benchmarks as proof it wins every BBK task. Local canaries and actual Blender outcomes remain authoritative.
+
+Official sources:
+
+- https://deepmind.google/models/gemini/flash/
+- https://deepmind.google/models/model-cards/gemini-3-8-flash/
+- https://deepmind.google/models/gemini/
+
+### GPT-6 Astra
+
+OpenAI describes GPT-6 Astra as its most capable model for hard end-to-end work, complex reasoning, coding, computer use, research, and multistep professional workflows. Official model documentation lists low, medium, high, xhigh, and max reasoning efforts. OpenAI’s model guidance specifically notes that Astra can delegate to subagents when the harness supports it, while advising explicit delegation instructions.
+
+Use Astra High for the root coordinator and high-impact integration/visual judgment. Reserve xhigh for milestone reviews or genuinely unresolved high-impact decisions. Do not run max by default.
+
+Official sources:
+
+- https://developers.openai.com/api/docs/models/gpt-6-astra
+- https://developers.openai.com/api/docs/guides/latest-model
+- https://help.openai.com/en/articles/20001275
+
+### GPT-5.6 Sol
+
+OpenAI describes GPT-5.6 Sol as a flagship model for complex professional work. Official documentation lists none, low, medium, high, xhigh, and max reasoning efforts. Use Sol High as the engineering specialist between Flash and Astra: difficult code, rig/skin/deformation logic, dependency conflicts, and state recovery.
+
+Official sources:
+
+- https://developers.openai.com/api/docs/models/gpt-5.6-sol
+- https://help.openai.com/en/articles/20001354-gpt-56-in-chatgpt
+
+### Availability caveat
+
+API documentation and public product pages do not prove the exact local Work, Codex CLI, or Antigravity entitlement. The receiving host must verify its actual authenticated route and exact slug/profile. OpenAI currently states that Astra in Codex requires CLI 0.153.0 or newer, and GPT-5.6 in Codex requires CLI 0.144.0 or newer. Availability can differ between Chat, Work, and Codex.
+
+Do not create an API key, buy credits, switch accounts, or migrate providers to satisfy this setup. Use existing subscription-backed and locally authorized routes only.
+
+## 2. Recover the actual current routing authority without guessing
+
+Begin inside the existing BBK project workspace. Read the applicable local `AGENTS.md`, project SSOT/continuity, active supervisor state, global write lease, continuation-runner state, current Codex configuration, custom agents/profiles, Antigravity wrapper, and the active model-router decision file or successor.
 
 The prior likely architecture is only a discovery hypothesis:
 
@@ -45,7 +93,7 @@ Codex / Work frontend
   -> one repository-writing implementation worker
 ```
 
-Do not assume this is still current. Find and record the exact active files, loaded revision, route evidence, writer lease, current local session, and any newer policy. Search only the project and the explicit configured control paths, not the user's entire home directory.
+Do not assume it is still current. Resolve the actually loaded router and exact revision. Search only the project and explicit configured control paths, not the user’s entire home directory.
 
 Check, when present:
 
@@ -53,7 +101,7 @@ Check, when present:
 MODEL_ROUTER_DECISION_V5.json
 newer MODEL_ROUTER_DECISION_* successors
 Hermes supervisor/router state
-Antigravity/Gemini launch wrapper and observed model slug
+Antigravity/Gemini launch wrapper and observed model profile
 $CODEX_HOME/config.toml
 $CODEX_HOME/*.config.toml
 $CODEX_HOME/agents/*.toml
@@ -65,368 +113,491 @@ existing continuation runner, queue, lock, ledger, and scheduler identity
 Before changing any authority or launcher file:
 
 1. Reconcile the current owned job and global write lease.
-2. Wait for a safe boundary if a writer is active; do not kill, cancel, or inject a second writer.
+2. If a writer is active, let it finish or reach its documented safe boundary. Do not kill, cancel, or inject a second writer.
 3. Save a timestamped byte-for-byte backup and SHA-256 manifest of every file to be changed.
-4. Record this user instruction as the BBK-scoped authority that supersedes the old Gemini-only restriction for this project only.
-5. Preserve the old router as a tested rollback target.
+4. Record this instruction as the BBK-scoped authority for the task-aware successor.
+5. Preserve the old Gemini-only route as a tested rollback target.
 
-If two active authority files conflict, do not choose by filename or timestamp alone. Resolve the actually loaded supervisor/router and produce `BLOCKED_ROUTER_AUTHORITY_CONFLICT` only after completing safe read-only discovery.
+If active authority files conflict, do not choose by filename or timestamp alone. Resolve what the current supervisor actually loads. Use `BLOCKED_ROUTER_AUTHORITY_CONFLICT` only after safe read-only discovery is exhausted; continue independent deterministic/model work that does not require the conflicting write path.
 
-## 2. Verify actual model access and CLI capability
+## 3. Verify the actual model inventory and execution surfaces
 
-Use the currently authenticated ChatGPT/Codex account and the existing Gemini/Antigravity account route. Do not create or request API keys, purchase credits, rotate accounts, copy cookies, or change providers globally.
+Use the currently authenticated ChatGPT/Codex account and the existing Gemini/Antigravity route. Do not create or request API keys, purchase credits, rotate accounts, copy cookies, or alter providers globally.
 
-Inspect the actual installed CLI and help before writing config:
+Inspect actual installed CLI help before writing configuration:
 
 ```text
 codex --version
 codex --help
 codex exec --help
 codex resume --help
+agy --help or the actual existing Antigravity wrapper help
 ```
 
-GPT-6 Astra requires Codex CLI 0.153.0 or newer. If the installed version is older, use only the existing approved official update mechanism with backup and rollback, and only if the active local policy permits it. Do not use `curl | sh`, sudo, a global package-manager migration, or an unreviewed installer. If an update is not authorized, record `ASTRA_BLOCKED_CLI_VERSION` and continue configuring the routes that are actually available.
+If Codex is below an officially required minimum, use only the existing approved update mechanism with backup and rollback and only when local policy already permits it. No `curl | sh`, sudo, global package-manager migration, or unreviewed installer. Otherwise keep the route blocked and continue with models that are actually available.
 
-Verify model availability with bounded read-only canaries, using the syntax supported by the observed CLI. The intended model IDs are:
+Verify bounded read-only or isolated canaries for these semantic routes:
 
 ```text
-gpt-6-astra
-gpt-5.6
-gpt-5.6-terra
-gpt-5.6-luna
+OPENAI_ASTRA_HIGH
+OPENAI_ASTRA_XHIGH
+OPENAI_GPT56_SOL_HIGH
+GEMINI_38_FLASH_LOW
+GEMINI_38_FLASH_MEDIUM
+GEMINI_38_FLASH_HIGH
 ```
 
-Verify the existing Antigravity Gemini slug/profile from the local wrapper rather than assuming its spelling. The expected semantic route is Gemini 3.7 Flash High, but the runtime-reported exact slug and account/profile are authoritative.
+Resolve exact local slugs rather than guessing them. The Gemini wrapper may encode model and effort in a profile name. Record the actual command/profile identity without exposing credentials.
 
-For each candidate route, capture:
+For every route capture:
 
 ```text
 provider
-actual model ID or observed external slug
-reasoning effort
-CLI/app version
-account/auth source without secrets
-surface (Work, Codex CLI, Antigravity CLI)
+actual model ID or external profile slug
+requested and observed reasoning effort
+CLI/app/wrapper version
+surface: Work, Codex CLI, or Antigravity CLI
 exit status
-runtime-reported route evidence
+runtime route evidence
 quota/rate-limit state when exposed
+subscription-backed versus API-key-backed route
 ```
 
-A model's prose self-description is not route evidence. Use runtime status, command metadata, or the existing verified route receipt. A failed model-access canary must not silently substitute another model.
+Reject API-key-backed routes unless they were already explicitly authorized for this project. A model’s prose self-description is not route evidence. A failed canary must not silently substitute another model.
 
-## 3. Preserve the existing control plane
+## 4. Preserve the existing control plane
 
-Keep these architectural invariants:
+Keep these invariants:
 
 - Codex/Work remains the user-facing coordinator.
-- Hermes remains the orchestrator, durable queue, memory/checkpoint and handoff owner.
-- The current continuation runner remains the only automation owner; extend it rather than adding a second watcher or scheduler.
-- The existing Antigravity Gemini route remains available for explicitly assigned work.
-- Exactly one repository/model integration writer may hold the global write lease.
-- Parallel read-only exploration, review, and test analysis may use multiple agent threads, but they cannot independently merge or mutate the master.
-- One heavy Blender/GPU job per shared host unless the current host controller proves a stricter or safer limit.
-- No background AI polling merely to burn tokens. Deterministic intake may poll with backoff; agent work starts on queued events or explicit continuation.
+- Hermes remains the orchestrator, durable queue, memory/checkpoint, retry, and handoff owner.
+- The existing continuation runner remains the only automation owner; extend it rather than adding another watcher or scheduler.
+- Antigravity remains the execution route for authorized Gemini calls.
+- Exactly one repository/master integration writer may hold the global write lease.
+- Parallel read-only exploration, visual review, or isolated worktree implementation may use distinct model workers, but they cannot independently merge or mutate the master.
+- One heavy Blender/GPU job per shared host unless current host evidence proves a stricter safe limit.
+- Default maximum two CPU-heavy test/build jobs, counting existing work.
+- No background AI polling merely to consume tokens. Deterministic intake may poll with backoff; model work begins on queued events or explicit continuation.
 
-Do not replace Hermes, create another memory store, start another master branch, enable competing auto-merge, change the user's installed Blender, widen sandbox permissions, or use `--yolo` / `--dangerously-bypass-approvals-and-sandbox`.
+Do not replace Hermes, create another memory store, create another master branch, enable competing auto-merge, alter the installed Blender, widen sandbox permissions, or use approval-bypass flags.
 
-## 4. Install the BBK task-aware route matrix
+Native Codex `spawn_agent` remains disabled if the active managed policy forbids it. Different-model “subagents” may instead be separate explicit CLI worker processes managed by the existing durable queue. This still satisfies the task-aware worker design without bypassing the local policy.
 
-Create a project-scoped successor router, using the existing router's schema and active location where possible. Prefer a name equivalent to `BBK_MODEL_ROUTER_V1.json` or a properly versioned successor of the current router. Preserve the old Gemini-only router for rollback.
+## 5. Deterministic-first task classification
 
-The router must classify explicit task metadata, not guess from a vague free-form prompt. At minimum support:
-
-```text
-COORDINATION_INTEGRATION
-VISUAL_MODELING_JUDGMENT
-BLENDER_COMPLEX_DEBUG
-IMPLEMENTATION_CODE
-READ_HEAVY_EXPLORATION
-DETERMINISTIC_VERIFICATION
-BULK_ISOLATED_DRAFT
-FINAL_ACCEPTANCE_REVIEW
-```
-
-Apply this primary matrix only after the route is actually observed as available:
-
-| Route role | Primary model / effort | Permissions | Intended work |
-|---|---|---|---|
-| `bbk_coordinator` | `gpt-6-astra`, `high` | existing coordinator permissions; single-writer admission only | M00 planning, cross-lane integration, conflict resolution, next-task choice, end-to-end follow-through |
-| `bbk_visual_director` | `gpt-6-astra`, `xhigh` | read-only by default | face/eye/hair/hood likeness, silhouette, render comparison, major artistic defect diagnosis, milestone acceptance recommendation |
-| `bbk_blender_architect` | `gpt-6-astra`, `high` | read-only or leased writer for a narrowly declared patch | hard Blender API failures, geometry/shader interactions, multi-part integration, native execution diagnosis |
-| `bbk_implementer` | `gpt-5.6`, `high` | the sole leased implementation writer | Blender Python builders, rig/skin/expression code, shader/material code, focused repairs and integration tests |
-| `bbk_explorer` | `gpt-5.6-terra`, `medium` | read-only | branch/result discovery, codebase exploration, official-source research, large-file review, dependency mapping |
-| `bbk_verifier` | `gpt-5.6-luna`, `medium` | read-only | hashes, manifests, deterministic log parsing, test triage, result normalization, deduplication and receipt checks |
-| `bbk_gemini_batch` | observed Gemini 3.7 Flash High route | isolated worktree; no master merge or final approval | high-volume repetitive scaffolding, bounded component variants, mechanical refactors, fixture generation, parallel drafts |
-| `bbk_final_reviewer` | `gpt-6-astra`, `xhigh` | read-only | final candidate review after native renders/reopen evidence; never self-grants user artistic approval |
-
-Do not run `xhigh` continuously. Use it at discrete high-value visual or final review boundaries. The coordinator and hard integration default to Astra High. Routine scans and receipts must not consume Astra unless the cheaper route fails on a materially complex case.
-
-### Explicit fallback rules
-
-Fallback is allowed only when recorded and only after actual route unavailability, not as a silent optimization:
+Do not waste any model on work that a deterministic tool can perform exactly. Add these task classes to the existing router or its project-scoped successor:
 
 ```text
-bbk_coordinator:
-  gpt-6-astra high
-  -> gpt-5.6 high with ASTRA_UNAVAILABLE marker
-  -> BLOCKED_COORDINATOR_MODEL if neither is available
-
-bbk_visual_director / bbk_final_reviewer:
-  gpt-6-astra xhigh
-  -> gpt-6-astra high
-  -> gpt-5.6 high marked PROVISIONAL_VISUAL_REVIEW
-  Final artistic/model-quality acceptance remains pending until the designated high-end review route or the user reviews it.
-
-bbk_implementer:
-  gpt-5.6 high
-  -> gpt-6-astra medium/high
-  -> observed Gemini 3.7 Flash High for isolated implementation only, followed by Astra/gpt-5.6 review before integration
-
-bbk_explorer:
-  gpt-5.6-terra medium
-  -> observed Gemini 3.7 Flash High
-  -> gpt-5.6-luna medium
-
-bbk_verifier:
-  gpt-5.6-luna medium
-  -> gpt-5.6-terra low/medium
-  -> observed Gemini 3.7 Flash High
+DETERMINISTIC_EXACT
+GEMINI_ROUTINE_LOW
+GEMINI_ENGINEERING_MEDIUM
+GEMINI_ENGINEERING_HIGH
+SOL_COMPLEX_ENGINEERING
+ASTRA_COORDINATION_HIGH
+ASTRA_VISUAL_HIGH
+ASTRA_FINAL_XHIGH
 ```
 
-Never rotate accounts, switch to an unapproved provider, lower the delivered Blender/render quality, or hide the fallback. Store `requested_route`, `actual_route`, `fallback_reason`, and `review_required` in every task receipt.
-
-## 5. Map the current BBK work to routes
-
-Use these defaults for the existing M00–M16 modeling program. A lane may use multiple roles, but one model owns each concrete task step.
-
-| Work | Primary execution | Required review |
-|---|---|---|
-| M00 master integration and prioritization | `bbk_coordinator` | `bbk_final_reviewer` at meaningful visual milestones |
-| M01 face/head, M02 eyes, M03/M04 hair, M06 hood | `bbk_blender_architect` or `bbk_implementer` depending on whether the step is visual/structural or code-heavy | `bbk_visual_director` |
-| M05 body/hands, M07 jacket, M08 inner/shorts, M09 footwear, M10 tail/accessories | `bbk_implementer`; `bbk_gemini_batch` may produce isolated repetitive drafts/fixtures | `bbk_visual_director` before adoption |
-| M11 UV/textures | `bbk_implementer` | `bbk_blender_architect`; visual result checked by `bbk_visual_director` |
-| M12 expressions | `bbk_blender_architect` for deformation design, `bbk_implementer` for code/shape-key tooling | `bbk_visual_director` |
-| M13 rig/skin | `bbk_implementer` | `bbk_blender_architect` |
-| M14 face/eye shading, M15 hair/cloth shading | `bbk_blender_architect` for material behavior, `bbk_implementer` for node/build code | `bbk_visual_director` under matched native conditions |
-| M16 native delivery, save/reopen/export | `bbk_implementer` | `bbk_coordinator` plus `bbk_verifier` |
-| Branch discovery, result intake, documentation research | `bbk_explorer` | coordinator spot-check |
-| Test logs, hashes, manifests, receipt normalization | `bbk_verifier` | coordinator only on exceptions |
-| Final whole-character before/after and readiness judgment | `bbk_final_reviewer` | user approval remains separate |
-
-Gemini is no longer the universal worker. It is a high-throughput specialist. It must not be the sole judge for face likeness, final model quality, integration conflicts, or release readiness.
-
-## 6. Configure Codex custom agents and CLI profiles safely
-
-Use the official Codex configuration mechanism supported by the observed version. Project-scoped Codex configuration loads only for a trusted project. Merge with existing files rather than overwriting them.
-
-The project `.codex/config.toml` should be equivalent to the following, adjusted only for the actual supported schema and current limits:
-
-```toml
-model = "gpt-6-astra"
-model_reasoning_effort = "high"
-
-[agents]
-enabled = true
-max_concurrent_threads_per_session = 4
-default_subagent_model = "gpt-5.6-terra"
-default_subagent_reasoning_effort = "medium"
-```
-
-`4` is a ceiling for open read-heavy agent threads, not four writers and not four Blender renders. Reduce it when the observed account, client, host, or managed policy requires a lower number. Keep write admission at one.
-
-Create project-scoped custom agent files under `.codex/agents/` using the actual current format. Each file must define `name`, `description`, and `developer_instructions`; set `model` and `model_reasoning_effort` explicitly for the roles above. Configure `sandbox_mode = "read-only"` for explorer, verifier, visual director, and final reviewer. The implementer may receive workspace-write only after Hermes grants the existing global lease and declares its exact write set.
-
-Do not place provider credentials, base URLs, authentication keys, or unrelated machine settings in project-scoped config. Codex project config cannot override machine-local provider/auth keys. If the current base config is tied to the Gemini external provider, keep that route in its existing Antigravity wrapper and use the authenticated OpenAI Codex route through named user-level profiles or explicit CLI model selection, without replacing the user's base profile.
-
-Create named user-level profile files only when needed and permitted, for example equivalent to:
-
-```text
-bbk-astra-high
-bbk-astra-xhigh
-bbk-gpt56-high
-bbk-terra-medium
-bbk-luna-medium
-```
-
-Do not change the default profile for unrelated projects. The continuation runner must select the profile explicitly by role.
-
-When native Codex subagents are permitted after this user-scoped override, use custom agents. If a managed configuration still prevents subagents, do not bypass it: use separate explicit `codex exec` jobs with exact `--model`/`--profile` and reasoning config, the same durable queue, and the same one-writer lease. Record `EXECUTION_MODE=CODEX_SUBAGENT` or `EXECUTION_MODE=EXPLICIT_CLI_WORKER`.
-
-## 7. Add a deterministic router to the existing Hermes continuation path
-
-Extend the existing continuation runner and Hermes task graph. Do not create a second scheduler.
-
-Add a small deterministic route selector, using the project's existing language and conventions, that accepts a structured task record such as:
+Routing must be based on structured task metadata, not a vague free-form request. A task record should include at least:
 
 ```json
 {
   "task_id": "...",
-  "task_class": "IMPLEMENTATION_CODE",
-  "lane": "M14",
+  "lane": "M00-M16 or shared",
+  "operation": "...",
   "needs_visual_judgment": false,
-  "needs_repo_write": true,
+  "needs_complex_state_reasoning": false,
+  "needs_repo_write": false,
   "needs_blender_gpu": false,
   "input_revision": "...",
-  "write_set": ["..."],
-  "expected_context": "medium"
+  "write_set": [],
+  "estimated_context": "small|medium|large",
+  "failure_history": []
 }
 ```
 
-The selector must return:
+The selector must return and persist:
 
 ```json
 {
-  "role": "bbk_implementer",
-  "requested_model": "gpt-5.6",
-  "requested_effort": "high",
-  "provider_route": "codex_chatgpt",
-  "permissions": "workspace-write-after-lease",
-  "review_role": "bbk_blender_architect",
-  "fallbacks": [],
-  "decision_rule": "explicit rule ID"
+  "task_class": "...",
+  "requested_route": "...",
+  "actual_route": "...",
+  "requested_effort": "...",
+  "actual_effort": "...",
+  "selection_reason": "...",
+  "fallback_reason": null,
+  "write_lease_required": false,
+  "review_route": "..."
 }
 ```
 
-Reject ambiguous write tasks instead of allowing a free-form model choice. Read-only tasks can be conservatively routed to explorer/verifier. A change in the active router revision must invalidate cached route decisions for unstarted tasks.
+### No-model work
 
-Every execution receipt must include:
+Use `DETERMINISTIC_EXACT` for:
 
-```text
-router revision/hash
-rule ID
-task class/lane
-requested and actual model
-reasoning effort
-provider/profile
-execution mode
-sandbox/permission mode
-writer lease ID when applicable
-input commit and source hashes
-output hashes
-fallback reason
-reviewer and review result
-usage data if exposed
-```
+- `git fetch`, branch/ref discovery, exact SHA comparison, changed-path lists;
+- checksums, manifests, file existence/size, JSON schema validation;
+- launching already reviewed tests and recording exit codes;
+- Blender subprocess execution from already reviewed source;
+- artifact decode/reopen checks that are deterministic;
+- queue, lock, deduplication, heartbeat, and receipt bookkeeping.
 
-The actual runtime route must be checked again at launch. A router JSON saying `gpt-6-astra` is not proof that Astra ran.
+A model may interpret a failure only after the deterministic command produces evidence.
 
-## 8. Keep one writer while using multiple models
+## 6. Install this task-aware route matrix
 
-Different models may work in parallel only when their effects are isolated:
+Use actual observed local slugs and profile syntax. The table defines semantic roles, not permission to invent a model route.
 
-- Explorer/verifier/visual-review roles remain read-only and can run concurrently within the observed thread limit.
-- Gemini batch work uses a disposable worktree/output and cannot write the master, router, shared ledger, or another lane.
-- Only `bbk_implementer`, `bbk_blender_architect`, or M00 may receive the single writer lease for one declared write set.
-- A read-only model can return a patch proposal. The leased writer rechecks current hashes and applies it semantically.
-- Do not let multiple agents write different files in the same Blender master concurrently merely because their paths differ.
-- One heavy native Blender/GPU job at a time. CPU-only source checks may use at most the observed safe capacity.
+| Semantic role | Primary model / effort | Intended work |
+|---|---|---|
+| `bbk_root` | GPT-6 Astra High | M00 coordination, cross-lane integration, next-task selection, conflict resolution, end-to-end follow-through |
+| `bbk_visual` | GPT-6 Astra High | face/eye/hair/hood likeness, silhouette, render comparison, major artistic defect diagnosis |
+| `bbk_final` | GPT-6 Astra xhigh | one milestone/final candidate review after native renders and reopen evidence; never grants user approval |
+| `bbk_complex_engineer` | GPT-5.6 Sol High | hard Blender bugs, dependency conflicts, rig/skin/expression logic, state recovery, multi-module repairs |
+| `bbk_flash_high` | Gemini 3.8 Flash High | `bpy` implementation, UV, modifiers/constraints, rig/shader scaffolding, long repetitive coding, bounded component iteration |
+| `bbk_flash_medium` | Gemini 3.8 Flash Medium | validation, test repair, file-structure checks, routine debugging, result normalization, documentation implementation |
+| `bbk_flash_low` | Gemini 3.8 Flash Low | branch/log/result triage, summaries, simple classifications after deterministic evidence |
+| `bbk_exact` | no model | hashes, tests, Git operations, process execution, queue/lock/receipt mechanics |
 
-If an agent finishes late, compare its pinned input against the current master. Rebase the idea, not the whole old file. A newer timestamp does not automatically win.
+### Why this differs from the older router
 
-## 9. Run route canaries before promotion
+Gemini remains the main throughput worker rather than being removed. The verified 3.8 Flash release is suited to agentic coding and long workflows, so use it for much of the implementation load. Astra is preserved for work where logs cannot determine correctness: identity, silhouette, visual coherence, complex orchestration, and final comparison. Sol is the engineering bridge for genuinely hard code/state problems.
 
-Do not activate the successor router globally for the BBK runner until these canaries pass with actual runtime evidence:
-
-1. **Astra coordinator canary:** `bbk_coordinator` reads the current checkpoint, identifies the highest-impact eligible task, and returns a structured plan without writing.
-2. **Terra explorer canary:** `bbk_explorer` scans the authenticated project for current modeling result heads and returns pinned candidates without mutation.
-3. **Luna verifier canary:** `bbk_verifier` validates one real manifest/hash/test receipt and catches a deliberately malformed fixture.
-4. **GPT-5.6 implementer canary:** under a temporary worktree and the single lease, `bbk_implementer` performs one small real current-project repair or integration, runs affected tests, and produces a reviewable commit or patch.
-5. **Gemini specialist canary:** the existing Antigravity route executes one bounded isolated batch/scaffolding task and records the exact Gemini route. It does not merge or self-approve.
-6. **Astra visual-review canary:** `bbk_visual_director` reviews an actual current native render or modeling result, identifies concrete visible defects, and does not confuse a method fixture or 2D image with the final character.
-7. **Single-writer canary:** a second write request is denied or queued while the first lease is active; no file is touched by the denied worker.
-8. **Rollback canary:** restore the old routing state in a disposable copy and prove the previous Gemini-only path still resolves without changing the live project.
-
-Use the cheapest route for malformed-fixture and deterministic tests. Do not use a fake model label or a prose claim as a canary.
-
-If Astra or another route is unavailable, activate only the verified subset and mark exact routes blocked. Do not call the setup fully task-aware when every task still goes to Gemini.
-
-## 10. Promote at a safe boundary and continue real work
-
-After the canaries pass:
-
-1. Commit the successor router, custom-agent files, selector, focused tests, backup manifest, rollback tool, and updated continuation configuration on the existing authorized local project branch/worktree.
-2. Read back the exact files and hashes.
-3. Atomically update the existing active-router pointer or supervisor configuration at a safe idle boundary.
-4. Restart only the specific continuation component if its documented reload mechanism requires it and no owned job is active. Never reboot the machine or restart Blender/other services as a shortcut.
-5. Run a status cycle and confirm the loaded router hash.
-6. Resume the existing BBK local-finish queue from its current cursor.
-7. Route the next highest-impact actual modeling task, not another configuration audit.
-
-The first post-activation task should advance visible 3D quality or native integration, preferably current face/eyes/hair/hood or an actual Blender builder that already has reviewed source. It must create or improve a real editable component/master and produce native evidence where the environment allows it.
-
-Do not stop at `ROUTER_INSTALLED`. Continue until the active turn/session reaches a real boundary, then checkpoint the exact next task and route.
-
-## 11. Required tests
-
-Add focused tests for:
-
-- every task class mapping to the expected role/model/effort;
-- the 16 modeling lanes mapping to the intended primary/reviewer pair;
-- unknown or malformed tasks failing closed;
-- no silent fallback;
-- Astra unavailable behavior;
-- Gemini route retained but no longer universal;
-- xhigh limited to visual/final boundaries;
-- one-writer lease enforcement across different models;
-- read-only roles unable to mutate;
-- route cache invalidated by router revision changes;
-- late result requiring semantic rebase;
-- actual CLI/profile invocation matching the receipt;
-- rollback restoring the previous loaded router;
-- unrelated project configuration remaining byte-identical.
-
-Do not count repeated tests or model self-reports as new product progress. Keep route tests separate from native Blender/model-quality evidence.
-
-## 12. Activation states and truthful reporting
-
-Use these states exactly or map them to equivalent existing states:
+Expected long-run share among **model calls**, not a quota target:
 
 ```text
-DISCOVERED_GEMINI_ONLY
-ROUTER_CANDIDATE_BUILT
-CANARIES_PARTIAL
-ACTIVE_TASK_AWARE_ROUTING
-ACTIVE_WITH_BLOCKED_ROUTES
-ROLLBACK_VERIFIED
-BLOCKED_ROUTER_AUTHORITY_CONFLICT
-BLOCKED_MANAGED_MODEL_POLICY
-BLOCKED_WRITER_OWNERSHIP
+Gemini 3.8 Flash: roughly 50-60%
+GPT-5.6 Sol: roughly 15-25%
+GPT-6 Astra: roughly 20-30%
 ```
 
-`ACTIVE_TASK_AWARE_ROUTING` requires:
+Do not force these percentages. Exact deterministic work should reduce all model usage. A task’s evidence and complexity decide its route.
 
-- Astra coordinator route actually observed;
-- at least two different subagent/CLI model routes actually observed;
-- Gemini route observed and constrained to its specialist role;
-- one real implementation task completed through the selected route;
-- one real review completed by a different appropriate route;
-- single-writer behavior verified;
-- active router hash read back;
-- rollback verified.
+## 7. Effort selection and escalation rules
 
-A config edit, `codex --version`, or successful no-op prompt alone cannot satisfy it.
+### Gemini 3.8 Flash
 
-Return a concise Korean report in this order:
+- **Low:** branch/result/log interpretation, lightweight classification, concise summaries.
+- **Medium:** validation, test diagnosis, file-structure work, ordinary repairs, manifest/provenance work.
+- **High:** `bpy`, UV, modifiers, constraints, rig structures, shader-node code, long automatic implementation, or large code context.
 
-1. actual active route matrix and loaded router revision;
-2. actual task completed after activation and its visible/native output;
-3. exact model/effort/provider receipts for each canary;
-4. blocked/unavailable routes and explicit fallbacks;
-5. unchanged controls: Hermes, one writer, existing scheduler/session, models/assets, unrelated projects;
-6. exact next real modeling task already queued or running.
+Do not send final face likeness or whole-character aesthetic approval to Flash alone.
 
-Do not claim that local autonomous continuation is active unless the existing continuation runner has loaded this router and executed the real post-activation task.
+### GPT-5.6 Sol
 
-## 13. Official current references
+Default to **High** for complex engineering. Use it when one or more of these apply:
 
-Use installed help as the source of truth for the actual client. These current official references establish the intended supported mechanisms:
+- cross-module state or ownership is difficult;
+- Blender execution fails after a plausible Flash repair;
+- rig/skin/deformation logic requires deep structural reasoning;
+- persistence, process recovery, or revision reconciliation is involved;
+- a shared-file semantic merge has nontrivial regression risk.
 
-- GPT-6 Astra model and supported reasoning efforts: https://developers.openai.com/api/docs/models/gpt-6-astra
-- ChatGPT Work/Codex Astra availability and Codex CLI 0.153.0 minimum: https://help.openai.com/en/articles/20001275/
-- Codex configuration reference, project config, profiles, and `[agents]` settings: https://developers.openai.com/codex/config-reference
-- Codex subagents and custom per-agent model/reasoning files: https://developers.openai.com/codex/multi-agent
-- Codex CLI model/profile/config flags: https://developers.openai.com/codex/cli/reference
+Do not use Sol merely because a routine test failed once.
 
-The docs confirm capability, not local availability. Verify the receiving account and loaded configuration.
+### GPT-6 Astra
 
-**Begin now in the existing local BBK session: reconcile the current writer, audit the actual Gemini-only restriction, build and test the BBK-scoped successor router, promote it only after real canaries, then continue the actual 3D modeling queue with the task-appropriate model.**
+- **High:** M00 root work, complex integration, reference-based visual diagnosis, facial/hair/hood direction, deciding between competing component candidates.
+- **xhigh:** a discrete milestone review, unresolved high-impact visual defect, or final integrated candidate. One review task at a time.
+- **max:** disabled by default. It requires a recorded current need and explicit project authorization beyond this setup.
+
+### Escalation ladder
+
+```text
+exact deterministic operation
+  -> Gemini 3.8 Low/Medium/High according to complexity
+  -> GPT-5.6 Sol High for verified complex engineering
+  -> GPT-6 Astra High for cross-system or visual/integration judgment
+  -> GPT-6 Astra xhigh for one high-value review boundary
+```
+
+Escalation is not “retry with a bigger model until something says PASS.” Preserve the exact failure, change the hypothesis, and run the appropriate route. After two identical failures with no new evidence, park the fingerprint and continue another eligible task.
+
+## 8. Explicit fallback policy
+
+Fallback must be recorded, never silent.
+
+```text
+Gemini 3.8 Flash unavailable:
+  -> existing verified Gemini 3.7 Flash High route for Gemini-assigned work
+  -> mark DEGRADED_GEMINI_37
+  -> continue checking 3.8 only at a later explicit maintenance boundary, not every task
+
+GPT-5.6 Sol unavailable:
+  -> Astra High for complex engineering when quota and route are available
+  -> mark FALLBACK_ASTRA_FROM_SOL
+  -> otherwise park only the affected complex task
+
+Astra unavailable:
+  -> Sol High may continue engineering and provisional integration
+  -> visual/final acceptance remains PROVISIONAL_VISUAL_REVIEW
+  -> do not let Sol or Gemini self-grant final artistic acceptance
+
+All model routes unavailable:
+  -> deterministic queue and Blender/test execution may continue
+  -> agent-required tasks become BLOCKED_MODEL_ROUTE
+```
+
+Never rotate accounts, use an unapproved provider, lower Blender/render quality, or consume paid API billing as an invisible fallback.
+
+## 9. Map M00-M16 to the appropriate routes
+
+A lane may use more than one route, but each concrete step has one owner and one receipt.
+
+| Work | Implementation route | Review / decision route |
+|---|---|---|
+| M00 master integration and prioritization | Astra High | Astra xhigh only at meaningful milestone |
+| M01 face/head | Gemini 3.8 High for builders; Sol High for topology/deformation bugs | Astra High, xhigh only for milestone likeness review |
+| M02 eyes/lids/lashes | Gemini 3.8 High for assets/material code; Sol High for fitting/deformation bugs | Astra High |
+| M03/M04 hair and braid | Gemini 3.8 High for geometry builders and iteration | Astra High for silhouette/flow |
+| M05 body/hands | Gemini 3.8 High for base builder; Sol High for joint/deformation complexity | Astra High at whole-body silhouette checkpoints |
+| M06 hood/horns | Gemini 3.8 High for construction; Sol High for intersections/attachments | Astra High |
+| M07 jacket | Gemini 3.8 High for pattern/mesh/tooling; Sol High for deformation/fit failures | Astra High for silhouette and fold hierarchy |
+| M08 inner/shorts, M09 footwear, M10 tail/accessories | Gemini 3.8 High | Astra High only when the component materially affects silhouette; Sol High for structural bugs |
+| M11 UV/textures | Gemini 3.8 High | Sol High on topology-bound conflicts; Astra High for visible seam/color decisions |
+| M12 expressions | Sol High for shape/deformation design and tooling | Astra High for identity/expression quality |
+| M13 rig/skin | Sol High primary; Gemini 3.8 High for diagnostics and repetitive weight tooling | Astra High only for visible deformation quality |
+| M14 face/eye shading | Gemini 3.8 High for node/build code; Sol High for Blender API/shader bugs | Astra High/xhigh under matched native conditions |
+| M15 hair/cloth shading | Gemini 3.8 High for material implementation | Astra High for coherent look; Sol High for technical shader conflicts |
+| M16 delivery/reopen/export | deterministic tools + Gemini 3.8 Medium | Astra High for actual visible result; Sol High for failed native pipeline |
+| branch/result discovery, SHA/log/status | deterministic first, Gemini 3.8 Low only for interpretation | M00 spot-check on anomalies |
+| repeated tests/validation/file inspection | deterministic first, Gemini 3.8 Medium | Sol High only for unresolved complex failure |
+| final integrated `.blend` visual QA | deterministic native render | Astra xhigh once, then user review |
+
+Do not use a model ratio to override this mapping. Do not let the same worker implement and independently approve a high-impact visual result.
+
+## 10. Configure per-role CLI workers or subagents safely
+
+Use the official configuration mechanism supported by the observed local versions. Merge with current files rather than overwriting them. Exact TOML/JSON keys must come from installed help/schema, not this document.
+
+Preferred execution order:
+
+1. **If the current harness supports per-agent model/effort profiles under policy:** create project-scoped roles for Astra High, Astra xhigh, Sol High, Gemini Flash Low/Medium/High, and deterministic exact work.
+2. **If native Codex subagents are prohibited or cannot mix external Gemini profiles:** keep `spawn_agent` disabled and have Hermes launch separate explicit CLI worker processes with exact role/profile, durable task ID, and bounded output.
+3. **If only the root Work session can use Astra:** keep M00 in that existing Astra High session and route subwork through the existing CLI workers; return evidence to M00 for integration.
+
+Do not use `--last` or `--all` for continuation. Bind explicit session IDs. Do not use `--yolo`, approval bypasses, ignore-rules flags, or provider credentials in project config.
+
+Create logical project-scoped profiles equivalent to:
+
+```text
+bbk-astra-high
+bbk-astra-xhigh
+bbk-sol-high
+bbk-gemini38-low
+bbk-gemini38-medium
+bbk-gemini38-high
+```
+
+Actual filenames and fields follow the observed local runner. Do not change default profiles for unrelated projects.
+
+Every worker invocation must include:
+
+```text
+project identity
+task ID and lane
+exact input revision
+read/write scope
+requested role/model/effort
+actual route evidence
+expected artifact
+bounded timeout/output
+review route
+```
+
+## 11. Concurrency and write ownership
+
+The target is parallel thinking and isolated production, not concurrent corruption.
+
+Initial safe ceiling, reduced when the actual host/account requires it:
+
+```text
+max_llm_workers = 3
+max_shared_repo_writers = 1
+max_master_integrators = 1
+max_blender_gpu_jobs = 1
+max_cpu_heavy_jobs = 2
+max_astra_xhigh_jobs = 1
+```
+
+A practical initial mix is:
+
+```text
+1 Astra High M00 coordinator
+1 Gemini 3.8 implementation/validation worker
+1 Sol High complex-engineering worker when an eligible task exists
+```
+
+A second Gemini read-only/isolated worker may replace the idle Sol slot for routine backlog. Do not keep expensive workers alive without an eligible task. All write-capable workers must use isolated worktrees and the existing global write lease. Only M00 integrates the master.
+
+A current in-flight Gemini 3.7 task is not canceled merely because 3.8 becomes available. Finish and review it, then route new tasks through 3.8.
+
+## 12. Implement the project-scoped router
+
+Extend the existing Hermes continuation path. Do not add a second scheduler or memory system.
+
+Required behavior:
+
+1. Deterministically classify each queued task.
+2. Select the semantic route and exact observed profile.
+3. Persist the routing receipt before launch.
+4. Acquire the existing write lease only for a declared write set.
+5. Launch the bounded worker in an isolated context.
+6. Validate actual outputs and route identity.
+7. Send the result to M00 for acceptance or rejection.
+8. Release the lease and select the next eligible task.
+9. Preserve failures and blocked routes without stopping unrelated work.
+
+The router must not infer model success from a worker’s prose. Require actual command metadata, output files, Git changes, native artifacts, or test evidence appropriate to the task.
+
+Project-scoped output should include equivalents of:
+
+```text
+router policy/config
+role/profile definitions
+route-selector implementation
+route-selector tests
+migration receipt
+model-inventory receipt
+canary receipts
+rollback script or exact reversible procedure
+updated continuation state
+```
+
+Do not edit unrelated global projects. If the current system has only a global router, add a BBK project predicate that preserves the existing default route elsewhere.
+
+## 13. Rollout without stopping current work
+
+Perform this transaction:
+
+```text
+observe current active job and router
+-> back up exact router/profile/runner files
+-> build project-scoped successor in an isolated copy
+-> run deterministic route-selector tests
+-> run read-only route canaries
+-> wait for current writer safe boundary
+-> activate BBK-scoped successor atomically
+-> run one real current BBK task
+-> verify its actual route/artifact
+-> automatically select a distinct next eligible task
+-> verify rollback to the old router in a controlled config test
+-> keep the new router active if all gates pass
+```
+
+Do not pause the whole project while waiting for every model route. Missing one route blocks only its specialized tasks; explicit fallbacks handle the rest.
+
+## 14. Required canaries
+
+Do not declare the router active until these are demonstrated with actual local evidence:
+
+1. **Current-work preservation:** the in-flight task was not killed, reset, or duplicated.
+2. **Deterministic route:** a Git/hash/test/queue task completes without an LLM call.
+3. **Gemini low/medium route:** branch/log/test evidence is interpreted with the observed Gemini 3.8 profile, or explicitly degraded to verified 3.7.
+4. **Gemini high route:** one isolated real BBK implementation or repair task produces a concrete reviewed change.
+5. **Sol route:** one genuinely complex engineering task is handled by GPT-5.6 Sol High, or the receipt records why no eligible Sol task existed. Do not manufacture a bug merely to exercise the model.
+6. **Astra High route:** M00 reviews and integrates/rejects a real current result using actual evidence.
+7. **Astra xhigh route:** run only when a meaningful native visual milestone exists. If none exists yet, keep this canary pending rather than wasting quota on fixtures.
+8. **Single-writer:** a competing write attempt returns BUSY without mutating the master.
+9. **No silent fallback:** intentionally unavailable test route records the requested/actual route and reason.
+10. **Automatic next stage:** after the real task completes, the runner selects a distinct eligible next task without a new user message.
+11. **Rollback:** the previous router can be restored from verified backup and then the new route reactivated, without touching model assets or task history.
+
+A text-only no-op is not a real task canary. A synthetic route test is useful but does not replace the concrete BBK cycle.
+
+## 15. Quality and cost policy
+
+The user’s proposed allocation is broadly sound and should be used as a routing hypothesis:
+
+- Gemini 3.8 Flash can handle most branch/result intake, validation, routine `bpy`, UV, modifier/constraint work, rig/shader scaffolding, and long repetitive automation.
+- GPT-5.6 Sol High is retained for hard engineering rather than routine bookkeeping.
+- Astra High/xhigh is protected for visual identity, facial/eye/hair/hood quality, cross-system integration, and final candidate review.
+
+Apply these corrections:
+
+- Exact hashes, tests, Git operations, and process management should usually use **no model**, not even Flash.
+- Gemini 3.8 Flash’s published benchmark wins are vendor-reported; actual local Blender outcomes decide escalation.
+- “Astra xhigh once at the end” is a good default, but a discrete earlier xhigh review is justified when a face/identity decision would otherwise contaminate many downstream parts.
+- Do not hard-code a workload percentage or burn remaining quota to meet a ratio.
+
+Track usage where the local clients expose it. Do not buy credits, invoke API billing, or downgrade native render/modeling quality. Prefer the smallest adequate reasoning effort, but never sacrifice the primary visible result for a cheaper PASS.
+
+## 16. Completion states
+
+Use these exact meanings:
+
+```text
+DISCOVERED_ONLY
+  Router/model files inspected; nothing activated.
+
+CONFIGURED_NOT_ACTIVE
+  Project-scoped config exists and static tests pass; no real task routed.
+
+ACTIVE_TASK_AWARE_ROUTER
+  Current work preserved, actual model routes verified, one real BBK task completed through the router, and a distinct next task selected automatically.
+
+ACTIVE_DEGRADED_GEMINI37
+  Same as active, but Gemini 3.8 is unavailable and the verified 3.7 route is explicitly used for Gemini-assigned work.
+
+PARTIAL_ROUTE_BLOCKED
+  Some specialized routes are unavailable; independent tasks continue under explicit fallback.
+
+ROLLBACK_REQUIRED
+  Route identity, write ownership, output integrity, or rollback verification failed. Restore the prior router and preserve task outputs.
+```
+
+Do not report active based only on writing config/profile files.
+
+## 17. Required final local receipt
+
+Record at least:
+
+```json
+{
+  "project": "BBK",
+  "status": "CONFIGURED_NOT_ACTIVE",
+  "previous_router": {
+    "path": null,
+    "sha256": null,
+    "loaded_revision": null
+  },
+  "new_router": {
+    "path": null,
+    "sha256": null,
+    "project_scoped": true
+  },
+  "current_job_preserved": null,
+  "model_inventory": [],
+  "role_profiles": [],
+  "canaries": [],
+  "actual_real_task": null,
+  "actual_next_task": null,
+  "single_writer_verified": false,
+  "rollback_verified": false,
+  "unrelated_projects_changed": false,
+  "api_keys_or_paid_routes_added": false,
+  "continuation_runner_reused": false,
+  "next_action": null
+}
+```
+
+Fill it from observed facts. Include requested and actual route, effort, execution surface, input revision, output identity, and evidence for every routed task. Keep secrets and private paths out of public reports.
+
+## 18. Continue the real project after activation
+
+Do not end after router setup. Resume the current BBK continuation queue immediately.
+
+Prioritize:
+
+1. actual editable whole-character candidate;
+2. native front/three-quarter/side renders;
+3. face, eye, hair, and hood quality;
+4. component integration and intersection repairs;
+5. material change/restore and saved-file reopen;
+6. rig, expressions, UV/material completion;
+7. final Astra xhigh review and user-ready delivery.
+
+The first meaningful 3D result remains more important than a larger router report. Tests, receipts, and routing infrastructure support that result; they do not replace it.
+
+**Begin now in the existing local session: preserve the current worker, inventory actual routes, install the BBK-scoped task-aware router, verify a real routed task, and continue the native modeling pipeline.**
